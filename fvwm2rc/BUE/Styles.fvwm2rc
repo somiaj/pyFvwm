@@ -1,0 +1,36 @@
+# Mouse Behivour
+ClickTime 350
+MoveThreshold 3
+CursorStyle root top_left_arrow
+
+# Window Placement
+Style * TileCascadePlacement, GrabFocusOff, !UsePPosition
+
+# Sets all windows to OpaqueMove (vs a wired frame) and  windows will
+# snap to each other and the edge of the screen.
+OpaqueMoveSize -1
+HideGeometryWindow
+Style * ResizeOpaque, SnapAttraction 15 SameType ScreenAll, SnapGrid
+XorValue 55555
+
+# Transient Windows (such as open file windows)
+Style * DecorateTransient, StackTransientParent
+Style * !FPGrabFocusTransient, FPReleaseFocusTransient
+
+# WindowShade
+Style * WindowShadeScrolls, WindowShadeSteps 10
+
+# Ignore Numlock and other modifiers for bindings
+# See http://fvwm.org/documentation/faq/#why-do-numlock-capslock-and-scrolllock-interfere-with-clicktofocus-andor-my-mouse-bindings
+IgnoreModifiers L25
+
+# Disable Icons from appearing on desktop.
+Style * !Icon
+
+# Window Specific Styles
+Style FvwmIconMan !Title, FixedSize, Sticky, WindowListSkip
+Style ConfirmQuit !Title, PositionPlacement Center, WindowListSkip, Layer 6
+Style FvwmConfig !Button 2, !Button 4, Sticky
+Style FvwmIdent !Button 2, !Button 4, Sticky, WindowListSkip
+Style FvwmConsole Sticky
+

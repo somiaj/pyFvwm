@@ -1,0 +1,151 @@
+#######
+# 4: Menus
+###########
+MenuStyle "*"           MenuColorSet 5, ActiveColorSet 6, TitleColorSet 8
+MenuStyle "*"           Hilight3DThickness -1, PopupOffset 3 100, HilightBack
+MenuStyle "*"           SeparatorsLong, BorderWidth 1
+MenuStyle "*"           PopupDelayed, PopUpDelay 200
+Menustyle "*"           TrianglesSolid, TrianglesUseFore
+MenuStyle "*"           Font "Shadow=1 0 SE:xft:Sans:bold:italic:size=8"
+MenuStyle "*"           TitleFont "Shadow=1 0 SE:xft:Sans:bold:italic:size=8"
+MenuStyle "*"           GreyedColorSet 7
+MenuStyle "*"           MouseWheel ScrollsMenu, Animation
+Menustyle "*"           ItemFormat "%s %i %|  %l%r %| %>"
+
+# Dynamic XDGMenu
+PipeRead "fvwm-menu-desktop -e"
+
+# BasicMenu
+CopyMenuStyle "*" "BasicMenu"
+MenuStyle "BasicMenu" VerticalItemSpacing 4 4
+ChangeMenuStyle "BasicMenu" "BasicMenu"
+
+DestroyMenu BasicMenu
+AddToMenu "BasicMenu"@BUE/sidepic.png@
++ "" Nop
++ "Terminal%icons/terminal.png%" FvwmTerm
++ "File Manager%icons/fileman.png%" FvwmFileMan
++ "Text Editor%icons/editor.png%" FvwmEditor
++ "Web Browser%icons/web.png%" FvwmWeb
++ "Media Player%icons/media.png%" FvwmMedia
++ "Task Manager%icons/tasks.png%" FvwmTasks
++ "" Nop
++ "Applications%icons/programs.png%" PopUp "AppsMenu"
++ "XDG Applications%icons/apps.png%" PopUp "XDGMenu"
++ "" Nop
++ "Configuration%icons/settings.png%" Exec exec pyfvwm util bue
++ "Wallpapers%icons/wallpaper.png%" PopUp "Wallpapers"
++ "Help%icons/help.png%" PopUp "MenuFvwmManPages"
++ "" Nop
++ "Log Out%icons/quit.png%" Module FvwmScript FvwmScript-ConfirmQuit
++ "" Nop
+
+
+# AppsMenu
+DestroyMenu AppsMenu
+AddToMenu AppsMenu "Applications" Title
+Test (x chromium) + "Chromium" Exec exec chromium
+Test (x firefox) + "Firefox" Exec exec firefox
+Test (x google-chrome) + "Google-Chrome" Exec exec google-chrome
+Test (x gvim) + "gVim" Exec exec gvim
+Test (x xemacs) + "XEmacs" Exec exec xemacs
+Test (x gimp) + "Gimp" Exec exec gimp
+Test (x vlc) + "VLC" Exec exec vlc
+Test (x xterm) + "XTerm" Exec exec xterm
+Test (x rxvt) + "rxvt" Exec exec rxvt
+Test (x urxvt) + "rxvt (unicode)" Exec exec urxvt
+Test (x pcmanfm) + "PCManFM" Exec exec pcmanfm
+Test (x spacefm) + "SpaceFM" Exec exec spacefm
+
+# Fvwm Menu
+DestroyMenu MenuFvwmRoot
+AddToMenu MenuFvwmRoot
++ "Applications%icons/programs.png%" Popup AppsMenu
++ "XDG Menu%icons/apps.png%" Popup XDGMenu
++ "" Nop
++ "Terminal%icons/terminal.png%" FvwmTerm
++ "File Manager%icons/fileman.png%" FvwmFileMan
++ "Text Editor%icons/editor.png%" FvwmEditor
++ "Web Browser%icons/web.png%" FvwmWeb
++ "Media Player%icons/media.png%" FvwmMedia
++ "Task Manager%icons/tasks.png%" FvwmTasks
++ "" Nop
++ "Configuration%icons/settings.png%" Exec exec pyfvwm util bue
++ "" Nop
++ "FvwmConsole%icons/terminal.png%" FvwmConsoleTerm
++ "Re&fresh%icons/refresh.png%" Refresh
++ "&Restart%icons/restart.png%" Restart
++ "&Quit%icons/quit.png%" Module FvwmScript FvwmScript-ConfirmQuit
+
+
+
+
+# Window Operations Menus
+DestroyMenu MenuWindowOps
+AddToMenu   MenuWindowOps
++ "Move"      Move
++ "Resize"    Resize
++ "Iconify"   Iconify
++ "Maximize"  Maximize
++ "Shade"     WindowShade
++ "Stick"     Stick
++ "" Nop
++ "Close"     Close
++ "More..."   Menu MenuWindowOpsLong This 0 0
+
+
+DestroyMenu MenuWindowOpsLong
+AddToMenu   MenuWindowOpsLong
++ "Move%icons/win/move.png%" Move
++ "Resize%icons/win/resize.png%" Resize
++ "(De)Iconify%icons/win/iconify.png%" Iconify
++ "(Un)Maximize%icons/win/max.png%" Maximize
++ "(Un)Shade%icons/win/shade.png%" WindowShade
++ "(Un)Sticky%icons/win/sticky.png%" Stick
++ "(No)Title Bar%icons/win/title.png%" Pick (CirculateHit) ToggleTitle
++ "Send To Desk%icons/win/sendto.png%" Popup MenuSendToDesk
++ "" Nop
++ "Close%icons/win/close.png%" Close
++ "Destroy%icons/win/destroy.png%" Destroy
++ "" Nop
++ "Raise%icons/win/raise.png%" Raise
++ "Lower%icons/win/lower.png%" Lower
++ "" Nop
++ "Stays On Top%icons/win/top.png%" Pick (CirculateHit) Layer 0 6
++ "Stays Put%icons/win/stays.png%" Pick (CirculateHit) Layer 0 4
++ "Stays On Bottom%icons/win/bottom.png%" Pick (CirculateHit) Layer 0 2
++ "" Nop
++ "Identify%icons/info.png%" Module FvwmIdent
+
+
+
+
+# Manpages
+DestroyMenu MenuFvwmManPages
+AddToMenu   MenuFvwmManPages "Help" Title
++ "fvwm"                ViewManPage fvwm
++ "FvwmAnimate"         ViewManPage FvwmAnimate
++ "FvwmAuto"            ViewManPage FvwmAuto
++ "FvwmBacker"          ViewManPage FvwmBacker
++ "FvwmBanner"          ViewManPage FvwmBanner
++ "FvwmButtons"         ViewManPage FvwmButtons
++ "FvwmCommand"         ViewManPage FvwmCommand
++ "FvwmConsole"         ViewManPage FvwmConsole
++ "FvwmEvent"           ViewManPage FvwmEvent
++ "FvwmForm"            ViewManPage FvwmForm
++ "FvwmIconMan"         ViewManPage FvwmIconMan
++ "FvwmIdent"           ViewManPage FvwmIdent
++ "FvwmPager"           ViewManPage FvwmPager
++ "FvwmPerl"            ViewManPage FvwmPerl
++ "FvwmProxy"           ViewManPage FvwmProxy
++ "FvwmRearrange"       ViewManPage FvwmRearrange
++ "FvwmScript"          ViewManPage FvwmScript
++ "" Nop
++ "fvwm-root"	        ViewManPage fvwm-root
++ "fvwm-menu-desktop"   ViewManPage fvwm-menu-desktop
++ "fvwm-menu-directory" ViewManPage fvwm-menu-directory
++ "fvwm-menu-headlines" ViewManPage fvwm-menu-headlines
++ "fvwm-menu-xlock"     ViewManPage fvwm-menu-xlock
++ "fvwm-config"         ViewManPage fvwm-config
+
+

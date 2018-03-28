@@ -1,0 +1,15 @@
+# BUE Default Pallet
+ColorSet 0 fg black, bg gray75
+ColorSet 1 fg $[fg.cs0], bg $[bg.cs0], fgsh $[hilight.cs0], VGradient 2 #cecece #b8b8b8
+ColorSet 2 fg White, bg slategray4, hi #9FADBC, sh #3A3D41, fgsh black, VGradient 2 #79899A #708091  
+ColorSet 3 fg $[fg.cs1], bg $[bg.cs0]
+ColorSet 4 fg $[fg.cs2], bg $[bg.cs2], hi $[hilight.cs2], sh $[shadow.cs2]
+ColorSet 5 fg $[fg.cs0], bg $[bg.cs0], hi $[hilight.cs0], sh $[shadow.cs0], \
+	 fgsh $[hilight.cs0], VGradient 200 #afafaf #cfcfcf, Dither 
+ColorSet 6 fg $[fg.cs2], bg $[bg.cs2], hi $[hilight.cs1], sh $[shadow.cs1], fgsh black, DGradient 16 #708091 #636F7C
+ColorSet 7 fg $[shadow.cs1], bg $[bg.cs1], fgsh $[hilight.cs1]
+ColorSet 8 fg $[fg.cs2], bg $[bg.cs0], fgsh Black
+ColorSet 10 bg $[bg.cs2], fg white, Dgradient 256 #000 #888, Alpha 50, Dither
+#Test (f $[infostore.wallpaper]) ColorSet 10 bg average, AspectPixmap $[infostore.wallpaper], Alpha 100
+Colorset 14 fg white, bg #8B6C74, fgsh black, Vgradient 2 #9A7981 #917078
+

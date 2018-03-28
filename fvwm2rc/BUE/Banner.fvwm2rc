@@ -1,0 +1,9 @@
+# FvwmBanner Splash
+
+
+DestroyModuleConfig FvwmBanner: *
+*FvwmBanner: Pixmap BUE/buesplash.png
+*FvwmBanner: Timeout 10
+*FvwmBanner: NoDecor
+
+Module FvwmBanner

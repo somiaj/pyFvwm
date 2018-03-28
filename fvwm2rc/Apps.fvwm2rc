@@ -1,0 +1,57 @@
+#pyFvwmStart
+fvwm.config = fvwm.checkdefaults("apps", fvwm.config)
+def FvwmFormatter(config):
+    dict = { 'termcmd': config['apps']['term'] }
+    if config['apps']['editorterm']:
+        dict.update({'editorcmd':'FvwmExecTerm {}'.format(config['apps']['editor'])})
+    else: dict.update({'editorcmd':'Exec exec {}'.format(config['apps']['editor'])})
+    if config['apps']['filemanterm']:
+        dict.update({'filemancmd':'FvwmExecTerm {}'.format(config['apps']['fileman'])})
+    else: dict.update({'filemancmd':'Exec exec {}'.format(config['apps']['fileman'])})
+    if config['apps']['webterm']:
+        dict.update({'webcmd':'FvwmExecTerm {}'.format(config['apps']['web'])})
+    else: dict.update({'webcmd':'Exec exec {}'.format(config['apps']['web'])})
+    if config['apps']['mediaterm']:
+        dict.update({'mediacmd':'FvwmExecTerm {}'.format(config['apps']['media'])})
+    else: dict.update({'mediacmd':'Exec exec {}'.format(config['apps']['media'])})
+    if config['apps']['tasksterm']:
+        dict.update({'taskscmd':'FvwmExecTerm {}'.format(config['apps']['tasks'])})
+    else: dict.update({'taskscmd':'Exec exec {}'.format(config['apps']['tasks'])})
+    return dict
+#pyFvwmEnd
+
+# Fvwm Application Launchers
+
+DestroyFunc FvwmTerm
+AddToFunc FvwmTerm
++ I Exec exec {termcmd}
+
+DestroyFunc FvwmConsoleTerm
+AddToFunc FvwmConsoleTerm
++ I Module FvwmConsole -terminal {termcmd}
+
+DestroyFunc FvwmExecTerm
+ADdToFunc FvwmExecTerm
++ I Exec exec {termcmd} -e $*
+
+DestroyFunc FvwmEditor
+AddToFunc FvwmEditor
++ I {editorcmd} $* 
+
+DestroyFunc FvwmFileMan
+AddToFunc FvwmFileMan
++ I {filemancmd} $*
+
+DestroyFunc FvwmWeb
+AddToFunc FvwmWeb
++ I {webcmd} $*
+
+DestroyFunc FvwmMedia
+AddToFunc FvwmMedia
++ I {mediacmd} $*
+
+DestroyFunc FvwmTasks
+AddToFunc FvwmTasks
++ I {taskscmd} $*
+
+

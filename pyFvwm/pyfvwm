@@ -1,0 +1,338 @@
+#!/usr/bin/python3
+
+# 
+# pyfvwm is a shell front end and launcher script
+# for pyFvwm and its utilities. This script should
+# be in your $PATH and the home location below
+# should be set to the install location of pyFvwm.
+#
+# Basic Usage: pyfvwm command [options]
+# For help run pyfvwm help.
+#
+
+import os
+import sys
+import glob
+import subprocess
+
+# Set this to the home location pyfvwm's files.
+global home
+home = "/home/jaimos/pyfvwm-0.1"
+
+# Setup enviorment so the utilities can find
+# the Python Fvwm module.
+if 'PYTHONPATH' in os.environ:
+    ppath = os.environ['PYTHONPATH']
+    if '{}/pyFvwm'.format(home) not in ppath:
+        # Set PYTHONPATH for subprocesses
+        os.environ.update({'PYTHONPATH':'{}/pyFvwm:{}'.format(home,ppath)})
+else: os.environ.update({'PYTHONPATH':'{}/pyFvwm'.format(home)})
+
+# Add home to working path
+try:
+    sys.path.index('{}/pyFvwm'.format(home))
+except ValueError:
+    sys.path.append('{}/pyFvwm'.format(home))
+
+# Try to import Fvwm
+try:
+    import Fvwm
+except Exception as err:
+        print("Unable to import Fvwm.py: {}".format(home, err))
+        sys.exit(1)
+
+# Check if pyFvwm() can initialize.
+try:
+    fvwm = Fvwm.pyFvwm()
+except:
+    print("Unable to initialize pyFvwm().")
+    sys.exit(1)
+
+# Check if yaml is installed.
+try:
+    import yaml
+except:
+    print("Unable to load python yaml.")
+    sys.exit(1)
+
+
+# The functions for each of pyfvwm's commands:
+
+#
+#   pyfvwm utilities [utility | list ]
+#
+# pyfvwm's utility function will launch a python utility.
+# Currently only utilities are Gtk configuration windows.
+def utils(fvwm, *args):
+    pathlist = glob.glob("{}/utils/*.py".format(Fvwm.home))
+    pathlist.sort()
+    utillist = ['list']
+    for path in pathlist:
+        utillist.append(os.path.basename(path)[:-3])
+
+    # List available utilities and exit.
+    if len(args) == 0 or 'list'.startswith(args[0]):
+        print("pyFvwm Utilitites:")
+        for util in utillist:
+            if util != 'list': print("    {}".format(util))
+        sys.exit()
+
+    # Find matching utility and run it as a subprocess
+    cmd = []
+    for util in utillist:
+        if util.lower().startswith(args[0]): cmd.append(util)
+    if len(cmd) == 0:
+        sys.exit("No utility matching {}.\nSee pyfvwm util list".format(args[0]))
+    if len(cmd) > 1:
+        sys.exit("Multiple utilities matched: {}".format(cmd))
+    util = "{}/utils/{}.py".format(Fvwm.home, cmd[0])
+    subprocess.Popen(["python3", util, *args[1:]])
+
+
+#
+#   pyfvwm build [theme]
+#
+# The build function will build the matching or default theme
+# and export the result to $HOME/.pyfvwm/.fvwm2rc. Then pyfvwm
+# outputs the command 'Read $HOME/.pyfvwm/.fvwm2rc'.
+def build(fvwm, *args):
+    fvwm2rc = fvwm.buildfvwm2rc()
+    configfile = open("{}/.fvwm2rc".format(fvwm.userdir), "w")
+    configfile.write(fvwm2rc)
+    configfile.close()
+    print("Read {}/.fvwm2rc".format(fvwm.userdir))
+
+#
+#   pyfvwm theme [theme]
+#
+# ToDo: Build this function
+def theme(fvwm, *args):
+    pass
+
+
+
+#
+#   pyfvwm fvwm2rc [rcfile|list]
+#
+# Will output the formatted configuration of the matching
+# fvwm2rc/*.fvwm2rc file or list available files.
+# Matching is not case sensitive.
+def fvwm2rc(fvwm, *args):
+    # List fvwm2rc files
+    if len(args) == 0 or "list".startswith(args[0]):
+        # Organize subdirectories first
+        system1, user1, system2, user2 = [[],[],[],[]]
+        for name in fvwm.fvwm2rcsystem:
+            if "/" in name: system1.append(name)
+            else: system2.append(name)
+        for name in fvwm.fvwm2rcuser:
+            if "/" in name: user1.append(name)
+            else: user2.append(name)
+
+        # Print a * to configs with user overrides.
+        print("pyFvwm fvwm2rc configuration files:\n  System: {}".format(fvwm.home))
+        for name in system1 + system2:
+            if name in fvwm.fvwm2rcuser:
+                print("   *{}".format(name))
+            else:
+                print("    {}".format(name))
+        print("\n  UserDir: {}".format(fvwm.userdir))
+        for name in user1 + user2:
+            print("    {}".format(name))
+        sys.exit()
+
+    # Find matching rcfile and print the resulting data.
+    # First combine system and user list into a single set.
+    rcfiles = fvwm.fvwm2rcuser + list(set(fvwm.fvwm2rcsystem) - set(fvwm.fvwm2rcuser))
+    cmd = str(args[0]).lower()
+    matches = []
+    for rcfile in rcfiles:
+        if rcfile.lower().startswith(cmd):
+            matches.append(rcfile)
+    if len(matches) > 1:
+        print("Multiple fvwm2rc matches for {}".format(cmd))
+        for match in matches:
+            print("    {}".format(match))
+    elif len(matches) == 0:
+        print("No fvwm2rc matches found for {}".format(cmd))
+    else:
+        data = fvwm.formatfvwm2rc(matches[0])
+        print(data)
+
+#
+#   pyfvwm reload fvwm2rc
+#
+# Formats the given rcfile then has fvwm Read the result
+# by writing a temporary file and telling fvwm to Read
+# the file using FvwmCommand.
+def reloadfvwm2rc(fvwm, *args):
+    if len(args) == 0:
+        print("Error: No fvwm2rc given.")
+        print("Usage: pyfvwm reload fvwm2rc")
+        sys.exit(1)
+
+    # Find matching fvwm2rc file
+    cmd = str(args[0]).lower()
+    rcfiles = fvwm.fvwm2rcuser + list(set(fvwm.fvwm2rcsystem) - set(fvwm.fvwm2rcuser))
+    matches = []
+    for rcfile in rcfiles:
+        if rcfile.lower().startswith(cmd):
+            matches.append(rcfile)
+    if len(matches) > 1:
+        print("Multiple fvwm2rc matches for {}".format(cmd))
+        for match in matches:
+            print("    {}".format(match))
+    elif len(matches) == 0:
+        print("No fvwm2rc matches found for {}".format(cmd))
+    else:
+        # Success. Formatting and sending to fvwm.
+        fvwm2rc = fvwm.formatfvwm2rc(matches[0])
+        fvwm.sendtofvwm(fvwm2rc, name=matches[0])
+
+#
+#   pyfvwm init $[vp.width] $[vp.height] [theme]
+#
+# Used when fvwm starts to set the height and
+# width of the screen to be used for in calculations
+# of various configuration, like the BasicBars location.
+def init(fvwm, *args):
+    if len(args) < 2: sys.exit(1)
+    fvwm.updatevpsize( int(args[0]), int(args[1]) )
+    if len(args) > 2: build(fvwm,*args[2:])
+    else: build(fvwm)
+
+
+#
+#   pyfvwm configure []
+#
+# Get the status of the pyFvwm install
+# ToDo: Check the install of pyFvwm
+def config(fvwm, *args):
+    if len(args) > 0:
+        cmd = args[0].lower()
+        if "version".startswith(cmd):
+            print(fvwm.version)
+            sys.exit()
+        if "home".startswith(cmd):
+            if home == fvwm.home: print(home)
+            else:
+                print("Warning! pyfvwm and Fvwm.py have different homes.")
+                print("    pyfvwm  : {}".format(home))
+                print("    Fvwm.py : {}\n".format(fvwm.home))
+            sys.exit()
+        if "userdir".startswith(cmd):
+            print(fvwm.userdir)
+            sys.exit()
+    print("pyFvwm: Python 3 Configuration System for Fvwm")
+    print("  Configuration:")
+    print("    Version:          {}".format(fvwm.version))
+    if home == fvwm.home:
+        print("    pyFvwm Home:      {}".format(home))
+    else:
+        print("  Warning! pyfvwm and Fvwm.py have different homes.")
+        print("    pyfvwm  : {}".format(home))
+        print("    Fvwm.py : {}\n".format(fvwm.home))
+    print("    pyFvwm UserDir:   {}".format(fvwm.userdir))
+    # Test fo PyGObject Gtk support.
+    try:
+        import gi
+        gi.require_version('Gtk', '3.0')
+        from gi.repository import Gtk
+        print("    pyGObject Gtk:    Ok")
+    except:
+        print("    pyGObject Gtk: Error. Gtk utilities will not work.")
+
+    print("  Fvwm Status:")
+    try:
+        process = subprocess.Popen(['fvwm', '--version'], stdout=subprocess.PIPE)
+        out, err = process.communicate()
+        print("    Fvwm Version:     {}".format(out.split()[1].decode()))
+    except:
+        print("    Fvwm Version:     Unknown")
+
+    try:
+        process = subprocess.Popen(['pidof', 'fvwm'], stdout=subprocess.PIPE)
+        out, err = process.communicate()
+        print("    Fvwm PID:         {}".format(out.decode().rstrip("\n")))
+    except:
+        print("    Fvwm PID:         Unknown")
+
+    try:
+        process = subprocess.Popen(['pidof', 'FvwmCommandS'], stdout=subprocess.PIPE)
+        out, err = process.communicate()
+        print("    FvwmCommandS PID: {}".format(out.decode().rstrip("\n")))
+    except:
+        print("    FvwmCommandS PID: Unknown")
+
+
+
+
+#
+#   pyfvwm version
+#
+# Prints version string
+def version(fvwm, *args):
+    config(fvwm, "version")
+
+#
+#   pyfvwm help
+#
+# Prints usage info for pyfvwm and exits.
+def help(fvwm, *args):
+    print("pyFvwm v{}: Python 3 Configuration System for Fvwm".format(fvwm.version))
+    print("""
+    Usage: pyfvwm command [options]
+
+List of commands:
+    utilities [utility|list]  .   .   .  Runs the matching utility or
+                                         lists available utilities.
+    fvwm2rc [rcfile|list] .   .   .   .  Formats the given rcfile or
+                                         lists available rcfiles.
+    theme [theme|list].   .   .   .   .  Shows fvwm2rc files in a theme
+                                         or lists available themes.
+    build [theme] .   .   .   .   .   .  Builds the default or specified
+                                         theme and saves fvwm configuration
+                                         file at $HOME/.pyfvwm/.fvwm2rc
+    reload fvwm2rc.   .   .   .   .   .  Formats given rcfile and sends to
+                                         fvwm via FvwmCommand.
+    config.   .   .   .   .   .   .   .  Checks the configuration of pyFvwm.
+    initialize $[vp.width] $[vp.height]  Used to initialize pyFvwm. Sets
+                                         width and height of viewport then
+                                         builds the theme.
+    version   .   .   .   .   .   .   .  Prints version info and exits.
+    help  .   .   .   .   .   .   .   .  Prints this help and exits.
+
+Commands and options do not need to be given in full. pyfvwm will attempt
+to match to a unique result that starts with the given inputs.
+Examples: 'pyfvwm b' runs a build of the default theme.
+          'pyfvwm u bue' launches the utility BUEconf.
+""")
+    sys.exit(1)
+
+
+
+# List of possible commands
+commands = { 'fvwm2rc': fvwm2rc,
+             'build': build,
+             'theme': theme,
+             'utilities': utils,
+             'reload': reloadfvwm2rc,
+             'initialize': init,
+             'configure': config,
+             'version': version,
+             'help': help,
+}
+
+# Parses input for matching command and then
+# calls the resulting function.
+if len(sys.argv) > 1:
+    command = sys.argv[1]
+    command_list = []
+    for key in commands:
+        if key.startswith(command): command_list.append(key)
+    if len(command_list) == 1:
+        fvwm = Fvwm.pyFvwm()
+        commands[command_list[0]](fvwm, *sys.argv[2:])
+    else: print("No matching commands found:", command)
+else: help(fvwm)
+

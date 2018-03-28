@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Generated with glade 3.20.0 -->
+<interface>
+  <requires lib="gtk+" version="3.20"/>
+  <object class="GtkGrid" id="appsgrid">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <child>
+      <object class="GtkLabel">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="tooltip_text" translatable="yes">Set command of terminal emulator. Terminal needs to support xterm's -e flag.</property>
+        <property name="halign">start</property>
+        <property name="margin_left">25</property>
+        <property name="margin_right">3</property>
+        <property name="margin_top">7</property>
+        <property name="margin_bottom">3</property>
+        <property name="label" translatable="yes">Terminal
+Emulator</property>
+      </object>
+      <packing>
+        <property name="left_attach">0</property>
+        <property name="top_attach">0</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkCheckButton" id="editorterm">
+        <property name="label" translatable="yes">Text
+Editor</property>
+        <property name="visible">True</property>
+        <property name="can_focus">True</property>
+        <property name="receives_default">False</property>
+        <property name="tooltip_text" translatable="yes">Default text editor. Select check box to run in a Terminal.</property>
+        <property name="margin_left">3</property>
+        <property name="margin_right">3</property>
+        <property name="margin_top">3</property>
+        <property name="margin_bottom">3</property>
+        <property name="draw_indicator">True</property>
+      </object>
+      <packing>
+        <property name="left_attach">0</property>
+        <property name="top_attach">1</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkCheckButton" id="filemanterm">
+        <property name="label" translatable="yes">File
+Manager</property>
+        <property name="visible">True</property>
+        <property name="can_focus">True</property>
+        <property name="receives_default">False</property>
+        <property name="tooltip_text" translatable="yes">Default file manager. Select check box to run in a Terminal.</property>
+        <property name="margin_left">3</property>
+        <property name="margin_right">3</property>
+        <property name="margin_top">3</property>
+        <property name="margin_bottom">3</property>
+        <property name="draw_indicator">True</property>
+      </object>
+      <packing>
+        <property name="left_attach">0</property>
+        <property name="top_attach">2</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkCheckButton" id="webterm">
+        <property name="label" translatable="yes">Web
+Browser</property>
+        <property name="visible">True</property>
+        <property name="can_focus">True</property>
+        <property name="receives_default">False</property>
+        <property name="tooltip_text" translatable="yes">Default web browser. Select check box to run in a Terminal.</property>
+        <property name="margin_left">3</property>
+        <property name="margin_right">3</property>
+        <property name="margin_top">3</property>
+        <property name="margin_bottom">3</property>
+        <property name="draw_indicator">True</property>
+      </object>
+      <packing>
+        <property name="left_attach">0</property>
+        <property name="top_attach">3</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkCheckButton" id="mediaterm">
+        <property name="label" translatable="yes">Media
+Player</property>
+        <property name="visible">True</property>
+        <property name="can_focus">True</property>
+        <property name="receives_default">False</property>
+        <property name="tooltip_text" translatable="yes">Default media player. Select check box to run in a Terminal.</property>
+        <property name="margin_left">3</property>
+        <property name="margin_right">3</property>
+        <property name="margin_top">3</property>
+        <property name="margin_bottom">3</property>
+        <property name="active">True</property>
+        <property name="draw_indicator">True</property>
+      </object>
+      <packing>
+        <property name="left_attach">0</property>
+        <property name="top_attach">4</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkCheckButton" id="tasksterm">
+        <property name="label" translatable="yes">Task
+Manager</property>
+        <property name="visible">True</property>
+        <property name="can_focus">True</property>
+        <property name="receives_default">False</property>
+        <property name="tooltip_text" translatable="yes">Default task manager. Select check box to run in a Terminal.</property>
+        <property name="margin_left">3</property>
+        <property name="margin_right">3</property>
+        <property name="margin_top">3</property>
+        <property name="margin_bottom">3</property>
+        <property name="active">True</property>
+        <property name="draw_indicator">True</property>
+      </object>
+      <packing>
+        <property name="left_attach">0</property>
+        <property name="top_attach">5</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkEntry" id="taskscmd">
+        <property name="visible">True</property>
+        <property name="can_focus">True</property>
+        <property name="tooltip_text" translatable="yes">Default task manager. Select check box to run in a Terminal.</property>
+        <property name="margin_left">3</property>
+        <property name="margin_right">7</property>
+        <property name="margin_top">3</property>
+        <property name="margin_bottom">3</property>
+        <property name="text" translatable="yes">top</property>
+      </object>
+      <packing>
+        <property name="left_attach">1</property>
+        <property name="top_attach">5</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkEntry" id="mediacmd">
+        <property name="visible">True</property>
+        <property name="can_focus">True</property>
+        <property name="tooltip_text" translatable="yes">Default media player. Select check box to run in a Terminal.</property>
+        <property name="margin_left">3</property>
+        <property name="margin_right">7</property>
+        <property name="margin_top">3</property>
+        <property name="margin_bottom">3</property>
+        <property name="text" translatable="yes">mpv</property>
+      </object>
+      <packing>
+        <property name="left_attach">1</property>
+        <property name="top_attach">4</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkEntry" id="webcmd">
+        <property name="visible">True</property>
+        <property name="can_focus">True</property>
+        <property name="tooltip_text" translatable="yes">Default web browser. Select check box to run in a Terminal.</property>
+        <property name="margin_left">3</property>
+        <property name="margin_right">7</property>
+        <property name="margin_top">3</property>
+        <property name="margin_bottom">3</property>
+        <property name="text" translatable="yes">firefox</property>
+      </object>
+      <packing>
+        <property name="left_attach">1</property>
+        <property name="top_attach">3</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkEntry" id="filemancmd">
+        <property name="visible">True</property>
+        <property name="can_focus">True</property>
+        <property name="tooltip_text" translatable="yes">Default file manager. Select check box to run in a Terminal.</property>
+        <property name="margin_left">3</property>
+        <property name="margin_right">7</property>
+        <property name="margin_top">3</property>
+        <property name="margin_bottom">3</property>
+        <property name="text" translatable="yes">spacefm</property>
+      </object>
+      <packing>
+        <property name="left_attach">1</property>
+        <property name="top_attach">2</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkEntry" id="editorcmd">
+        <property name="visible">True</property>
+        <property name="can_focus">True</property>
+        <property name="tooltip_text" translatable="yes">Default text editor. Select check box to run in a Terminal.</property>
+        <property name="margin_left">3</property>
+        <property name="margin_right">7</property>
+        <property name="margin_top">3</property>
+        <property name="margin_bottom">3</property>
+        <property name="text" translatable="yes">gvim</property>
+      </object>
+      <packing>
+        <property name="left_attach">1</property>
+        <property name="top_attach">1</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkEntry" id="termcmd">
+        <property name="visible">True</property>
+        <property name="can_focus">True</property>
+        <property name="tooltip_text" translatable="yes">Set command of terminal emulator. Terminal needs to support xterm's -e flag.</property>
+        <property name="margin_left">3</property>
+        <property name="margin_right">7</property>
+        <property name="margin_top">7</property>
+        <property name="margin_bottom">3</property>
+        <property name="hexpand">True</property>
+        <property name="text" translatable="yes">xterm</property>
+      </object>
+      <packing>
+        <property name="left_attach">1</property>
+        <property name="top_attach">0</property>
+      </packing>
+    </child>
+  </object>
+</interface>

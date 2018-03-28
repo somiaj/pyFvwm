@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Generated with glade 3.20.0 -->
+<interface>
+  <requires lib="gtk+" version="3.20"/>
+  <object class="GtkAdjustment" id="autoraise">
+    <property name="upper">5000</property>
+    <property name="value">800</property>
+    <property name="step_increment">50</property>
+    <property name="page_increment">250</property>
+  </object>
+  <object class="GtkAdjustment" id="fontsize">
+    <property name="lower">4</property>
+    <property name="upper">32</property>
+    <property name="value">8</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkGrid" id="windowsgrid">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <child>
+      <object class="GtkLabel">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="tooltip_text" translatable="yes">ClickToFocus will focus windows when clicked on. SloppyFocus and MouseFocus the focus will follow the mouse. </property>
+        <property name="halign">end</property>
+        <property name="margin_left">7</property>
+        <property name="margin_right">3</property>
+        <property name="margin_top">7</property>
+        <property name="margin_bottom">3</property>
+        <property name="label" translatable="yes">Focus Policy</property>
+      </object>
+      <packing>
+        <property name="left_attach">0</property>
+        <property name="top_attach">0</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkComboBoxText" id="focus">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="tooltip_text" translatable="yes">ClickToFocus will focus windows when clicked on. SloppyFocus and MouseFocus the focus will follow the mouse. </property>
+        <property name="margin_left">3</property>
+        <property name="margin_right">7</property>
+        <property name="margin_top">7</property>
+        <property name="margin_bottom">3</property>
+        <property name="active">0</property>
+        <items>
+          <item translatable="yes">ClickToFocus</item>
+          <item translatable="yes">SloppyFocus</item>
+          <item translatable="yes">MouseFocus</item>
+        </items>
+      </object>
+      <packing>
+        <property name="left_attach">1</property>
+        <property name="top_attach">0</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkLabel">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="tooltip_text" translatable="yes">When clicking on the close (left most button) in the title bar of a window, fvwm should do what? If window options is chosen, a double click will still close a window.</property>
+        <property name="halign">end</property>
+        <property name="margin_left">7</property>
+        <property name="margin_right">3</property>
+        <property name="margin_top">3</property>
+        <property name="margin_bottom">3</property>
+        <property name="label" translatable="yes">Close Button</property>
+      </object>
+      <packing>
+        <property name="left_attach">0</property>
+        <property name="top_attach">2</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkComboBoxText" id="closebutton">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="tooltip_text" translatable="yes">When clicking on the close (left most button) in the title bar of a window, fvwm should do what? If window options is chosen, a double click will still close a window.</property>
+        <property name="margin_left">3</property>
+        <property name="margin_right">7</property>
+        <property name="margin_top">3</property>
+        <property name="margin_bottom">3</property>
+        <property name="active">0</property>
+        <items>
+          <item translatable="yes">Window Options</item>
+          <item translatable="yes">Close Window</item>
+        </items>
+      </object>
+      <packing>
+        <property name="left_attach">1</property>
+        <property name="top_attach">2</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkSpinButton" id="raisect">
+        <property name="visible">True</property>
+        <property name="can_focus">True</property>
+        <property name="tooltip_text" translatable="yes">Delay in miliseconds before raising a window that has focus when using SloppyFocus or MouseFocus.</property>
+        <property name="halign">start</property>
+        <property name="margin_left">3</property>
+        <property name="margin_right">7</property>
+        <property name="margin_top">3</property>
+        <property name="margin_bottom">3</property>
+        <property name="adjustment">autoraise</property>
+      </object>
+      <packing>
+        <property name="left_attach">1</property>
+        <property name="top_attach">1</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkCheckButton" id="fvwmauto">
+        <property name="label" translatable="yes">Auto Raise</property>
+        <property name="visible">True</property>
+        <property name="can_focus">True</property>
+        <property name="receives_default">False</property>
+        <property name="tooltip_text" translatable="yes">When using SloppyFocus or MouseFocus, select to auto raise the focused window after a set delay.</property>
+        <property name="margin_left">3</property>
+        <property name="margin_right">3</property>
+        <property name="margin_top">3</property>
+        <property name="margin_bottom">3</property>
+        <property name="draw_indicator">True</property>
+      </object>
+      <packing>
+        <property name="left_attach">0</property>
+        <property name="top_attach">1</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkEntry" id="font">
+        <property name="visible">True</property>
+        <property name="can_focus">True</property>
+        <property name="tooltip_text" translatable="yes">DefaultFont</property>
+        <property name="margin_left">3</property>
+        <property name="margin_right">7</property>
+        <property name="margin_top">3</property>
+        <property name="margin_bottom">3</property>
+        <property name="text" translatable="yes">Sans</property>
+      </object>
+      <packing>
+        <property name="left_attach">1</property>
+        <property name="top_attach">3</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkLabel">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="halign">end</property>
+        <property name="margin_left">7</property>
+        <property name="margin_right">3</property>
+        <property name="margin_top">3</property>
+        <property name="margin_bottom">3</property>
+        <property name="label" translatable="yes">DefaultFont</property>
+      </object>
+      <packing>
+        <property name="left_attach">0</property>
+        <property name="top_attach">3</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkLabel" id="Font Size">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="halign">end</property>
+        <property name="margin_left">7</property>
+        <property name="margin_right">3</property>
+        <property name="margin_top">3</property>
+        <property name="margin_bottom">3</property>
+        <property name="label" translatable="yes">Font Size</property>
+      </object>
+      <packing>
+        <property name="left_attach">0</property>
+        <property name="top_attach">4</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkSpinButton" id="fontsizect">
+        <property name="visible">True</property>
+        <property name="can_focus">True</property>
+        <property name="tooltip_text" translatable="yes">Default font size.</property>
+        <property name="halign">start</property>
+        <property name="margin_left">3</property>
+        <property name="margin_right">7</property>
+        <property name="margin_top">3</property>
+        <property name="margin_bottom">3</property>
+        <property name="adjustment">fontsize</property>
+      </object>
+      <packing>
+        <property name="left_attach">1</property>
+        <property name="top_attach">4</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkLabel">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="halign">end</property>
+        <property name="margin_left">7</property>
+        <property name="margin_right">3</property>
+        <property name="margin_top">3</property>
+        <property name="margin_bottom">3</property>
+        <property name="label" translatable="yes">Fix Width</property>
+      </object>
+      <packing>
+        <property name="left_attach">0</property>
+        <property name="top_attach">5</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkEntry" id="fixedfont">
+        <property name="visible">True</property>
+        <property name="can_focus">True</property>
+        <property name="tooltip_text" translatable="yes">Default fix width font.</property>
+        <property name="margin_left">3</property>
+        <property name="margin_right">7</property>
+        <property name="margin_top">3</property>
+        <property name="margin_bottom">3</property>
+        <property name="hexpand">True</property>
+        <property name="text" translatable="yes">Mono</property>
+      </object>
+      <packing>
+        <property name="left_attach">1</property>
+        <property name="top_attach">5</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkComboBoxText" id="leftmouse">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="tooltip_text" translatable="yes">When left clicking on the desktop, what menu will open?</property>
+        <property name="margin_left">3</property>
+        <property name="margin_right">7</property>
+        <property name="margin_top">3</property>
+        <property name="margin_bottom">3</property>
+        <property name="active">0</property>
+        <items>
+          <item translatable="yes">Basic Menu</item>
+          <item translatable="yes">Applications Menu</item>
+          <item translatable="yes">XDG Menu</item>
+          <item translatable="yes">WindowOps Menu</item>
+          <item translatable="yes">Fvwm Menu</item>
+          <item translatable="yes">Nothing</item>
+        </items>
+      </object>
+      <packing>
+        <property name="left_attach">1</property>
+        <property name="top_attach">6</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkComboBoxText" id="rightmouse">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="tooltip_text" translatable="yes">When right clicking on the desktop, what menu will open?</property>
+        <property name="margin_left">3</property>
+        <property name="margin_right">7</property>
+        <property name="margin_top">3</property>
+        <property name="margin_bottom">7</property>
+        <property name="active">3</property>
+        <items>
+          <item translatable="yes">Basic Menu</item>
+          <item translatable="yes">Applications Menu</item>
+          <item translatable="yes">XDG Menu</item>
+          <item translatable="yes">WindowOps Menu</item>
+          <item translatable="yes">Fvwm Menu</item>
+          <item translatable="yes">Nothing</item>
+        </items>
+      </object>
+      <packing>
+        <property name="left_attach">1</property>
+        <property name="top_attach">7</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkLabel">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="tooltip_text" translatable="yes">When left clicking on the desktop, what menu will open?</property>
+        <property name="halign">end</property>
+        <property name="margin_left">7</property>
+        <property name="margin_right">3</property>
+        <property name="margin_top">3</property>
+        <property name="margin_bottom">3</property>
+        <property name="label" translatable="yes">Left Mouse</property>
+      </object>
+      <packing>
+        <property name="left_attach">0</property>
+        <property name="top_attach">6</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkLabel">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="tooltip_text" translatable="yes">When right clicking on the desktop, what menu will open?</property>
+        <property name="halign">end</property>
+        <property name="margin_left">7</property>
+        <property name="margin_right">3</property>
+        <property name="margin_top">3</property>
+        <property name="margin_bottom">3</property>
+        <property name="label" translatable="yes">Right Mouse</property>
+      </object>
+      <packing>
+        <property name="left_attach">0</property>
+        <property name="top_attach">7</property>
+      </packing>
+    </child>
+  </object>
+</interface>

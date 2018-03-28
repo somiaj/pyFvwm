@@ -1,0 +1,43 @@
+# Configures some basic Window Manager proprieties.
+
+
+
+#pyFvwmStart
+fvwm.config = fvwm.checkdefaults("wm", fvwm.config)
+def FvwmFormatter(config):
+    data = {'font': config['wm']['font'],
+            'fontsize': config['wm']['fontsize'],
+            'focus': config['wm']['focus']}
+    if config['wm']['fvwmauto']:
+        data.update({'fvwmauto':'Module FvwmAuto {}'.format(config['wm']['raisedelay'])})
+    else: data.update({'fvwmauto':""})
+    menus = ['Basic', 'Apps', 'XDG', 'Window', 'Fvwm', 'None']
+    menunames = ['BasicMenu', 'AppsMenu', 'XDGMenu', 'MenuWindowOpsLong', 'MenuFvwmRoot', 'Nop']
+    left = menunames[menus.index(config['wm']['leftmouse'])]
+    right = menunames[menus.index(config['wm']['rightmouse'])]
+    if left != 'Nop': data.update({'leftmouse':'Menu {} Nop'.format(left)})
+    else: data.update({'leftmouse':'-'})
+    if right != 'Nop': data.update({'rightmouse':'Menu {} Nop'.format(right)})
+    else: data.update({'rightmouse':'-'})
+    if config['wm']['closebutton'] == "Close":
+        data.update({'closebutton':'Close'})
+    else: data.update({'closebutton':'Menu MenuWindowOps Close'})
+    return data
+#pyFvwmEnd
+
+KillModule FvwmAuto
+
+# Focus Policy
+Style * {focus}
+Style * MouseFocusClickRaises
+
+# Default Font
+DefaultFont "xft:{font}:Bold:size={fontsize}:antialias=True"
+
+# FvwmAuto to Raise windows
+{fvwmauto}
+
+# Mouse Bindings
+Mouse 1         R       A       {leftmouse}
+Mouse 3         R       A       {rightmouse}
+Mouse 1         1       A       {closebutton}

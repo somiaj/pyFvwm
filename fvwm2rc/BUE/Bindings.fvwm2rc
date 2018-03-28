@@ -1,0 +1,116 @@
+################################################################################
+#
+#
+#	Basic User Environment			
+#		Bindings.fvwm2rc	
+#
+#	To edit, copy this file to be $HOME/.buserenv/fvwmrc
+#	
+#
+#
+#									^^
+#	  http://ultharine.ninthgate.se/fvwm/			       (  )
+#								       (  ))	
+################################################################################
+
+# Mouse- and Key Bindings ######################################################
+
+# Recall that mouse formats look like this:
+#
+# +------------+
+# | ||  ||  || |
+# |	       |
+# +------------+
+#   1   2   3
+
+# Contexts:
+#   R = Root Window                 rrrrrrrrrrrrrrrrrrrrrr
+#   W = Application Window          rIrrrrFSSSSSSSSSFrrrrr
+#   F = Frame Corners               rrrrrrS13TTTT642Srrrrr
+#   S = Frame Sides                 rIrrrrSwwwwwwwwwSrrrrr
+#   T = Title Bar                   rrrrrrSwwwwwwwwwSrrrrr
+#   I = Icon                        rIrrrrFSSSSSSSSSFrrrrr
+#                                   rrrrrrrrrrrrrrrrrrrrrr
+#
+# Numbers are buttons, positioned on the titlebar like this:
+# 1 3 5 7 9   0 8 6 4 2
+#
+# Modifiers:
+#  A = Any
+#  C = Control
+#  S = Shift
+#  M = Meta (Alt on a PC keyboard)
+#
+# See also http://fvwmforums.org/wiki/Config/Bindings/
+
+# This removes the built-in fvwm root menu
+#Mouse 1		R	A       Menu "BasicMenu" Nop
+
+#     Button	Context	Modifi	Function
+#Mouse 3		R	A	Menu "MenuWindowOpsLong" Nop
+#Mouse 3		R       C	Menu "fvwm" Nop
+Mouse 2		R	A	WindowList  
+
+#Mouse 1         1       A       Menu MenuWindowOps Close
+Mouse 2		1	A	Current WindowList ($[w.class]) Button1 0 +18p SortByClass OnTop NoGeometry NoCurrentDeskTitle NoNumInDeskTitle TitleForAllDesks MaxLabelWidth 30 nohotkeys NoDeskNum IconifiedAtEnd
+Mouse 1		4       A	Iconify
+Mouse 1		2       A	Maximize
+#Mouse 1		2	A	Close
+Mouse 1		FS      A	Resize-or-Raise
+Mouse 1		T       A	Move-or-Raise
+Mouse 1		I       A	Move-or-Iconify
+Mouse 2		I       A	Iconify
+Mouse 3		TSIF    A	PopUp "Window"
+Mouse 2		W       C	Resize-or-Raise
+Mouse 1		W       M	Move-or-Raise
+Mouse 2		T	A	Move-or-Lower
+
+# Ctrl+alt+left and right arrows goes one workspace to the left and to the right,
+# respectively. Up and down arrows jumps two workspaces at a time. With four
+# workspaces, that means any workspace is reachable by just one keypress.
+ 
+Key up		A	MC	ChangeDesk -2
+Key down	A 	MC	ChangeDesk 2
+Key left	A	MC	ChangeDesk -1
+Key right	A 	MC	ChangeDesk 1
+
+# Switch workspaces with the mouse wheel on the workspace background
+Mouse 5		R	A	ChangeDesk 1
+Mouse 4		R	A	ChangeDesk -1
+
+# Fancy windowshading with the mouse wheel
+Mouse 4		T	A	WindowShade True
+Mouse 5		T	A	WindowShade False
+
+# Left windows key opens the root menu, with Ctrl also pressed it opens
+# a menu of additional wm-related actions
+Silent Key Super_L	A	N	Menu "Root" Root c c
+Silent Key Super_L	A	C	Menu "Fvwm" Root c c
+
+# Hotkey to raise the panel
+Silent Key Super_L	A	M	All (BasicBar,circulatehit) Raise
+
+Silent Key Super_R A A Exec exec xterm
+
+
+# Standard window operation keys (IBM CUA)
+Key F4		A	M	Close
+Key F7		A	M	Move
+Key F8		A	M	Resize
+Key F9		A	M	Iconify
+Key F10		A	M	Maximize
+Key Space	A	M	Popup "Window" Button1 0 +18p 
+
+# Alt+Tab functionality
+Key Tab A M WindowList Root c c CurrentDesk CurrentAtEnd NoHotKeys NoDeskNum NoGeometry NoNumInDeskTitle MaxLabelWidth 30
+Key Tab A SM WindowList Root c c CurrentDesk NoHotKeys NoDeskNum NoGeometry NoNumInDeskTitle MaxLabelWidth 30
+
+# Ctrl+Esc gives the window list per the CUA.
+#Key Escape	A	C	WindowList Root c c $[infostore.winlist_ops]
+# Ctrl+F12 restarts FVWM, good to have if you are editing a file like this one
+# and want a quick restart.
+Key F12		A	C	Restart 
+
+# Ctrl+Alt+I starts FvwmIdent, also good when editing a file like this one and wanting to match windows for Style directives and the likes
+Key I		A	CM	Current Module FvwmIdent
+

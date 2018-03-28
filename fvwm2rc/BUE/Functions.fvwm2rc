@@ -1,0 +1,89 @@
+################################################################################
+#
+#
+#	Basic User Environment			
+#		system.fvwmrc	
+#
+#	To edit, copy this file to be $HOME/.buserenv/fvwmrc
+#	
+#
+#
+#									^^
+#	  http://ultharine.ninthgate.se/fvwm/			       (  )
+#								       (  ))	
+################################################################################
+
+
+# Window Operations
+#
+# Binding Functions
+#
+# "I" stands for Immediate
+# "M" stands for Motion
+# "C" stands for Click
+# "H" stands for Hold
+# "D" stands for Double Click
+
+DestroyFunc "Move-or-Lower" 
+AddToFunc "Move-or-Lower" M Move
++ M Lower
++ C Lower
++ D RaiseLower
+
+DestroyFunc "Move-or-Iconify" 
+AddToFunc "Move-or-Iconify" M Move
++ C Popup "Window" nop
++ D Iconify
+
+DestroyFunc "Windowops-or-Die" 
+AddToFunc "Windowops-or-Die" 
++ C Popup "Window" Nop
++ M Popup "Window" nop
++ H Popup "Window" nop
++ D Close
+
+DestroyFunc "Move-or-Raise" 
+AddToFunc "Move-or-Raise" M Raise
++ M Move
++ C Raise
++ D WindowShade
+
+DestroyFunc "Resize-or-Raise" 
+AddToFunc "Resize-or-Raise" "M" Resize
++ M Raise
++ C Raise
++ D RaiseLower
+
+DestroyFunc "RaisedMove"
+AddToFunc "RaisedMove"
++ I Raise
++ I AnimatedMove $*
+
+# This function positions the windows on a workspace so they overlap eachother 
+# as little as possible. Look up WindowStyle in fvwm(1), nifty stuff can be
+# done.
+DestroyFunc "UnclutterWindows"
+AddToFunc "UnclutterWindows"
++ I EWMHBaseStruts 10 10 10 10
++ I All (Currentdesk,!iconic,!sticky,!maximized) WindowStyle MinOverLapPlacement
++ I All (Currentdesk,!iconic,!sticky,!maximized) PlaceAgain
++ I All (Currentdesk,!iconic,!sticky,!maximized) DestroyWindowStyle
++ I EWMHBaseStruts 0 0 0 0
+
+# This toggles a window being always on top of other windows
+DestroyFunc "ToggleOnTop"
+AddToFunc "ToggleOnTop"
++ I Pick (Layer 4) Layer 0 6
++ I TestRc (NoMatch) Pick (Layer 6) Layer 0 4
+
+# This gets executed when a window title in the WindowList is clicked.
+# If you use SloppyFocus or MouseFocus you likely want to uncomment
+# the last line.
+DestroyFunc WindowListFunc
+AddToFunc WindowListFunc
++ I Iconify off 
++ I FlipFocus
++ I Raise
++ I WarpToWindow 10 5p
+
+

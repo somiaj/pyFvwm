@@ -1,0 +1,84 @@
+# Configures Fvwm's Virtual Desktops.
+#
+# pyFvwm desktop configuration:
+#   Sets the DesktopSize (Page grid) and DesktopNames.
+#   Creates ChangeBG function to set backgrounds.
+#   Creates ChangeDesk function to cycle through Desktops.
+#   Configures and Runs FvwmBacker to change the wallpaper on each desk.
+#   Creates Wallpaper menu for a full list of wallpapers.
+#   Configures EdgeScroll and EdgeResistance for pages.
+#
+#pyFvwmStart
+fvwm.config = fvwm.checkdefaults("desktop", fvwm.config)
+def FvwmFormatter(config):
+    data = { 'pagex': config['desktop']['pagex'],
+             'pagey': config['desktop']['pagey'],
+             'bgcmd': config['desktop']['bgcmd'],
+             'edgeresist': config['desktop']['edgeresist'] }
+    if config['desktop']['edgescroll']:
+        data.update({'edgescroll': 100, 'edgethickness': 1})
+    else: data.update({'edgescroll': 0, 'edgethickness': 0})
+    if config['desktop']['bgdir'] == 'pyFvwm':
+        bgdir = '{}/images/wallpapers'.format(fvwm.home)
+    else: bgdir = config['desktop']['bgdir']
+    data.update({'bgdir':bgdir})
+    maxdesk = int(config['desktop']['maxdesks'])-1
+    desktoplist = ""
+    fvwmbackerlist = ""
+    movetodesk = ""
+    for i, desk in enumerate(config['desktop']['desktops']):
+        if i > maxdesk: break
+        desktoplist += "DesktopName {} {}\n".format(i, desk['name'])
+        fvwmbackerlist += "*FvwmBacker: Command (Desk {}) SetBG {}.png\n".format(i, desk['wallpaper'])
+        movetodesk += '+ "{}" MoveToDesk 0 {}\n'.format(desk['name'], i)
+    if config['desktop']['fvwmbacker']:
+        fvwmbacker = "Module FvwmBacker"
+    else: fvwmbacker = "SetBG {}.png".format(config['desktop']['desktops'][0]['wallpaper'])
+    wallpapers = ""
+    wallpaperlist = glob.glob("{}/*.png".format(bgdir))
+    wallpaperlist.sort()
+    for wallpaper in wallpaperlist:
+        wallpapers += '+ "{name}" SetBG {name}.png\n'.format(name = os.path.basename(wallpaper)[:-4])
+    data.update({'maxdesk': maxdesk, 'desktoplist': desktoplist,
+                 'wallpapers': wallpapers, 'fvwmbacker': fvwmbacker,
+                 'fvwmbackerlist': fvwmbackerlist,
+                 'movetodesk': movetodesk })
+    return data
+#pyFvwmEnd
+
+# Desktop and Pages
+KillModule FvwmBacker
+
+DesktopSize {pagex}x{pagey}
+{desktoplist}
+
+DestroyFunc ChangeDesk
+AddToFunc ChangeDesk
++ I GotoDesk $0 0 {maxdesk}
+
+DestroyMenu MenuSendToDesk
+AddToMenu   MenuSendToDesk
++ "Current" MoveToDesk
++ "" Nop
+{movetodesk}
+
+DestroyFunc SetBG
+AddToFunc SetBG
++ I Exec exec {bgcmd} {bgdir}/$0
+
+DestroyModuleConfig FvwmBacker: *
+{fvwmbackerlist}
+
+{fvwmbacker}
+
+DestroyMenu Wallpapers
+AddToMenu Wallpapers "Wallpapers" Title
+{wallpapers}
+
+
+# EdgeScroll
+EdgeScroll {edgescroll} {edgescroll}
+EdgeResistance {edgeresist}
+Style * EdgeMoveDelay {edgeresist}, EdgeMoveResistance {edgeresist}
+EdgeThickness {edgethickness}
+

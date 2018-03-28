@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Generated with glade 3.20.0 -->
+<interface>
+  <requires lib="gtk+" version="3.20"/>
+  <object class="GtkGrid" id="basicbargrid">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <child>
+      <object class="GtkLabel">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="tooltip_text" translatable="yes">How should time be displayed?</property>
+        <property name="halign">end</property>
+        <property name="margin_left">7</property>
+        <property name="margin_right">3</property>
+        <property name="margin_top">3</property>
+        <property name="margin_bottom">3</property>
+        <property name="label" translatable="yes">Time Format</property>
+      </object>
+      <packing>
+        <property name="left_attach">0</property>
+        <property name="top_attach">4</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkLabel">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="tooltip_text" translatable="yes">When Maximizing windows, should they go to full screen and Overlap the BasicBar, or should space be left for the BasicBar?</property>
+        <property name="halign">end</property>
+        <property name="margin_left">7</property>
+        <property name="margin_right">3</property>
+        <property name="margin_top">3</property>
+        <property name="margin_bottom">3</property>
+        <property name="label" translatable="yes">EwmhBaseStruts</property>
+      </object>
+      <packing>
+        <property name="left_attach">0</property>
+        <property name="top_attach">3</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkLabel">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="tooltip_text" translatable="yes">When overlaping another window, should the BasicBar always be on Top, Bottm, or on the same Layer as the other windows.</property>
+        <property name="halign">end</property>
+        <property name="margin_left">7</property>
+        <property name="margin_right">3</property>
+        <property name="margin_top">3</property>
+        <property name="margin_bottom">3</property>
+        <property name="label" translatable="yes">Layer</property>
+      </object>
+      <packing>
+        <property name="left_attach">0</property>
+        <property name="top_attach">2</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkLabel">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="tooltip_text" translatable="yes">Where should the BasicBar be located?</property>
+        <property name="halign">end</property>
+        <property name="margin_left">7</property>
+        <property name="margin_right">3</property>
+        <property name="margin_top">3</property>
+        <property name="margin_bottom">3</property>
+        <property name="label" translatable="yes">Location</property>
+      </object>
+      <packing>
+        <property name="left_attach">0</property>
+        <property name="top_attach">1</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkComboBoxText" id="time">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="tooltip_text" translatable="yes">How should time be displayed?</property>
+        <property name="margin_left">3</property>
+        <property name="margin_right">7</property>
+        <property name="margin_top">3</property>
+        <property name="margin_bottom">3</property>
+        <property name="active">0</property>
+        <items>
+          <item id="12" translatable="yes">12 Hour</item>
+          <item id="24" translatable="yes">24 Hour</item>
+        </items>
+      </object>
+      <packing>
+        <property name="left_attach">1</property>
+        <property name="top_attach">4</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkComboBoxText" id="basestruts">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="tooltip_text" translatable="yes">When Maximizing windows, should they go to full screen and Overlap the BasicBar, or should space be left for the BasicBar?</property>
+        <property name="margin_left">3</property>
+        <property name="margin_right">7</property>
+        <property name="margin_top">3</property>
+        <property name="margin_bottom">3</property>
+        <property name="active">0</property>
+        <items>
+          <item translatable="yes">Leave Space</item>
+          <item translatable="yes">Overlap</item>
+        </items>
+      </object>
+      <packing>
+        <property name="left_attach">1</property>
+        <property name="top_attach">3</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkComboBoxText" id="layer">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="tooltip_text" translatable="yes">When overlaping another window, should the BasicBar always be on Top, Bottm, or on the same Layer as the other windows.</property>
+        <property name="margin_left">3</property>
+        <property name="margin_right">7</property>
+        <property name="margin_top">3</property>
+        <property name="margin_bottom">3</property>
+        <property name="active">0</property>
+        <items>
+          <item translatable="yes">Top</item>
+          <item translatable="yes">Same</item>
+          <item translatable="yes">Bottom</item>
+        </items>
+      </object>
+      <packing>
+        <property name="left_attach">1</property>
+        <property name="top_attach">2</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkComboBoxText" id="loc">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="tooltip_text" translatable="yes">Where should the BasicBar be located?</property>
+        <property name="margin_left">3</property>
+        <property name="margin_right">7</property>
+        <property name="margin_top">4</property>
+        <property name="margin_bottom">3</property>
+        <property name="hexpand">True</property>
+        <property name="active">4</property>
+        <items>
+          <item id="0" translatable="yes">Top Left</item>
+          <item id="1" translatable="yes">Top Center</item>
+          <item id="2" translatable="yes">Top Right</item>
+          <item id="3" translatable="yes">Bottom Left</item>
+          <item id="4" translatable="yes">Bottom Center</item>
+          <item id="5" translatable="yes">Bottom Right</item>
+        </items>
+      </object>
+      <packing>
+        <property name="left_attach">1</property>
+        <property name="top_attach">1</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkLabel">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="tooltip_text" translatable="yes">What is the size of the BasicBar?</property>
+        <property name="halign">end</property>
+        <property name="margin_left">7</property>
+        <property name="margin_right">3</property>
+        <property name="margin_top">3</property>
+        <property name="margin_bottom">3</property>
+        <property name="label" translatable="yes">Size</property>
+      </object>
+      <packing>
+        <property name="left_attach">0</property>
+        <property name="top_attach">0</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkComboBoxText" id="size">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="tooltip_text" translatable="yes">What is the size of the BasicBar?</property>
+        <property name="margin_left">3</property>
+        <property name="margin_right">8</property>
+        <property name="margin_top">7</property>
+        <property name="margin_bottom">3</property>
+        <property name="active">2</property>
+        <items>
+          <item id="35" translatable="yes">Giant</item>
+          <item id="30" translatable="yes">Large</item>
+          <item id="25" translatable="yes">Regular</item>
+          <item id="20" translatable="yes">Small</item>
+          <item id="15" translatable="yes">Tiny</item>
+        </items>
+      </object>
+      <packing>
+        <property name="left_attach">1</property>
+        <property name="top_attach">0</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkLabel">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="tooltip_text" translatable="yes">When clicking the right button, what should the BasicBar do?</property>
+        <property name="halign">end</property>
+        <property name="margin_left">7</property>
+        <property name="margin_right">7</property>
+        <property name="margin_top">3</property>
+        <property name="margin_bottom">7</property>
+        <property name="label" translatable="yes">Right Button</property>
+      </object>
+      <packing>
+        <property name="left_attach">0</property>
+        <property name="top_attach">7</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkComboBoxText" id="rightb">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="tooltip_text" translatable="yes">When clicking the right button, what should the BasicBar do?</property>
+        <property name="margin_left">3</property>
+        <property name="margin_right">7</property>
+        <property name="margin_top">3</property>
+        <property name="margin_bottom">7</property>
+        <property name="active">0</property>
+        <items>
+          <item translatable="yes">Log Out</item>
+          <item translatable="yes">Show Desktop</item>
+          <item translatable="yes">Terminal</item>
+          <item translatable="yes">Home</item>
+          <item translatable="yes">Nothing</item>
+        </items>
+      </object>
+      <packing>
+        <property name="left_attach">1</property>
+        <property name="top_attach">7</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkLabel">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="tooltip_text" translatable="yes">How big should the fonts be?</property>
+        <property name="halign">end</property>
+        <property name="margin_left">7</property>
+        <property name="margin_right">3</property>
+        <property name="margin_top">3</property>
+        <property name="margin_bottom">3</property>
+        <property name="label" translatable="yes">Font Size</property>
+      </object>
+      <packing>
+        <property name="left_attach">0</property>
+        <property name="top_attach">6</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkEntry" id="font">
+        <property name="visible">True</property>
+        <property name="can_focus">True</property>
+        <property name="tooltip_text" translatable="yes">What font to use for the BasicBar?</property>
+        <property name="margin_left">3</property>
+        <property name="margin_right">7</property>
+        <property name="margin_top">3</property>
+        <property name="margin_bottom">3</property>
+        <property name="text" translatable="yes">Sans</property>
+      </object>
+      <packing>
+        <property name="left_attach">1</property>
+        <property name="top_attach">5</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkLabel">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="tooltip_text" translatable="yes">What font to use for the BasicBar?</property>
+        <property name="halign">end</property>
+        <property name="margin_left">7</property>
+        <property name="margin_right">3</property>
+        <property name="margin_top">3</property>
+        <property name="margin_bottom">3</property>
+        <property name="label" translatable="yes">Font</property>
+      </object>
+      <packing>
+        <property name="left_attach">0</property>
+        <property name="top_attach">5</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkComboBoxText" id="fontsize">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="tooltip_text" translatable="yes">How big should the fonts be?</property>
+        <property name="margin_left">3</property>
+        <property name="margin_right">7</property>
+        <property name="margin_top">3</property>
+        <property name="margin_bottom">3</property>
+        <property name="active">1</property>
+        <items>
+          <item translatable="yes">Large</item>
+          <item translatable="yes">Regular</item>
+          <item translatable="yes">Small</item>
+        </items>
+      </object>
+      <packing>
+        <property name="left_attach">1</property>
+        <property name="top_attach">6</property>
+      </packing>
+    </child>
+  </object>
+</interface>

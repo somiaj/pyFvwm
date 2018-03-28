@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Generated with glade 3.20.0 -->
+<interface>
+  <requires lib="gtk+" version="3.20"/>
+  <object class="GtkAdjustment" id="cols">
+    <property name="lower">1</property>
+    <property name="upper">20</property>
+    <property name="value">3</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">5</property>
+  </object>
+  <object class="GtkAdjustment" id="edgeresist">
+    <property name="upper">2000</property>
+    <property name="value">250</property>
+    <property name="step_increment">50</property>
+    <property name="page_increment">250</property>
+  </object>
+  <object class="GtkAdjustment" id="maxdesk">
+    <property name="lower">1</property>
+    <property name="upper">20</property>
+    <property name="value">4</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">5</property>
+  </object>
+  <object class="GtkAdjustment" id="rows">
+    <property name="lower">1</property>
+    <property name="upper">20</property>
+    <property name="value">3</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">5</property>
+  </object>
+  <object class="GtkGrid" id="desktopgrid">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <child>
+      <object class="GtkLabel">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="tooltip_text" translatable="yes">Number of virtual desktops.</property>
+        <property name="halign">end</property>
+        <property name="margin_left">7</property>
+        <property name="margin_right">3</property>
+        <property name="margin_top">3</property>
+        <property name="margin_bottom">3</property>
+        <property name="hexpand">True</property>
+        <property name="label" translatable="yes">Virtual Desktops</property>
+      </object>
+      <packing>
+        <property name="left_attach">0</property>
+        <property name="top_attach">0</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkComboBox" id="desksel">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="tooltip_text" translatable="yes">Selects a desktop to configure its name and wallpaper.</property>
+        <property name="margin_left">7</property>
+        <property name="margin_right">3</property>
+        <property name="margin_top">3</property>
+        <property name="margin_bottom">3</property>
+        <signal name="changed" handler="onChangeDesk" swapped="no"/>
+      </object>
+      <packing>
+        <property name="left_attach">0</property>
+        <property name="top_attach">1</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkSpinButton" id="maxdeskct">
+        <property name="visible">True</property>
+        <property name="can_focus">True</property>
+        <property name="tooltip_text" translatable="yes">Number of virtual desktops.</property>
+        <property name="halign">start</property>
+        <property name="margin_left">3</property>
+        <property name="margin_right">7</property>
+        <property name="margin_top">3</property>
+        <property name="margin_bottom">3</property>
+        <property name="hexpand">True</property>
+        <property name="text" translatable="yes">4</property>
+        <property name="adjustment">maxdesk</property>
+        <property name="value">4</property>
+        <signal name="value-changed" handler="onMaxDeskChange" swapped="no"/>
+      </object>
+      <packing>
+        <property name="left_attach">1</property>
+        <property name="top_attach">0</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkEntry" id="deskname">
+        <property name="visible">True</property>
+        <property name="can_focus">True</property>
+        <property name="tooltip_text" translatable="yes">Name of the selected desktop.</property>
+        <property name="margin_left">3</property>
+        <property name="margin_right">7</property>
+        <property name="margin_top">3</property>
+        <property name="margin_bottom">3</property>
+      </object>
+      <packing>
+        <property name="left_attach">1</property>
+        <property name="top_attach">1</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkCheckButton" id="fvwmbacker">
+        <property name="label" translatable="yes">FvwmBacker</property>
+        <property name="visible">True</property>
+        <property name="can_focus">True</property>
+        <property name="receives_default">False</property>
+        <property name="tooltip_text" translatable="yes">Enable FvwmBacker to set a different wallpaper for each desktop. Otherwise all desktops will use the Desktop 0 wallpaper.</property>
+        <property name="halign">end</property>
+        <property name="margin_left">7</property>
+        <property name="margin_right">3</property>
+        <property name="margin_top">3</property>
+        <property name="margin_bottom">3</property>
+        <property name="image_position">right</property>
+        <property name="draw_indicator">True</property>
+        <signal name="toggled" handler="onFvwmBackerPress" swapped="no"/>
+      </object>
+      <packing>
+        <property name="left_attach">0</property>
+        <property name="top_attach">2</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkComboBox" id="bgsel">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="tooltip_text" translatable="yes">Wallpaper for the selected desktop.</property>
+        <property name="margin_left">3</property>
+        <property name="margin_right">7</property>
+        <property name="margin_top">3</property>
+        <property name="margin_bottom">3</property>
+      </object>
+      <packing>
+        <property name="left_attach">1</property>
+        <property name="top_attach">2</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkLabel">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="tooltip_text" translatable="yes">Number of columns of pages per desktop.</property>
+        <property name="halign">end</property>
+        <property name="margin_left">7</property>
+        <property name="margin_right">3</property>
+        <property name="margin_top">3</property>
+        <property name="margin_bottom">3</property>
+        <property name="hexpand">True</property>
+        <property name="label" translatable="yes">Columns</property>
+      </object>
+      <packing>
+        <property name="left_attach">0</property>
+        <property name="top_attach">3</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkSpinButton" id="colct">
+        <property name="visible">True</property>
+        <property name="can_focus">True</property>
+        <property name="tooltip_text" translatable="yes">Number of columns of pages per desktop.</property>
+        <property name="halign">start</property>
+        <property name="margin_left">3</property>
+        <property name="margin_right">7</property>
+        <property name="margin_top">3</property>
+        <property name="margin_bottom">3</property>
+        <property name="hexpand">False</property>
+        <property name="adjustment">rows</property>
+      </object>
+      <packing>
+        <property name="left_attach">1</property>
+        <property name="top_attach">3</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkSpinButton" id="rowct">
+        <property name="visible">True</property>
+        <property name="can_focus">True</property>
+        <property name="tooltip_text" translatable="yes">Number of rows of pages per desktop.</property>
+        <property name="halign">start</property>
+        <property name="margin_left">3</property>
+        <property name="margin_right">7</property>
+        <property name="margin_top">3</property>
+        <property name="margin_bottom">3</property>
+        <property name="hexpand">True</property>
+        <property name="adjustment">cols</property>
+      </object>
+      <packing>
+        <property name="left_attach">1</property>
+        <property name="top_attach">4</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkLabel">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="tooltip_text" translatable="yes">Number of rows of pages per desktop.</property>
+        <property name="halign">end</property>
+        <property name="margin_left">7</property>
+        <property name="margin_right">3</property>
+        <property name="margin_top">3</property>
+        <property name="margin_bottom">3</property>
+        <property name="hexpand">True</property>
+        <property name="label" translatable="yes">Rows</property>
+      </object>
+      <packing>
+        <property name="left_attach">0</property>
+        <property name="top_attach">4</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkLabel">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="tooltip_text" translatable="yes">Command used to set the wallpaper image.</property>
+        <property name="halign">end</property>
+        <property name="margin_left">3</property>
+        <property name="margin_right">2</property>
+        <property name="margin_top">3</property>
+        <property name="margin_bottom">7</property>
+        <property name="label" translatable="yes">Wallpaper
+Command</property>
+      </object>
+      <packing>
+        <property name="left_attach">0</property>
+        <property name="top_attach">7</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkLabel">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="tooltip_text" translatable="yes">Full path to the directory containg wallpapers.</property>
+        <property name="halign">end</property>
+        <property name="margin_left">3</property>
+        <property name="margin_right">3</property>
+        <property name="margin_top">3</property>
+        <property name="margin_bottom">3</property>
+        <property name="label" translatable="yes">Wallpaper
+Directory</property>
+      </object>
+      <packing>
+        <property name="left_attach">0</property>
+        <property name="top_attach">6</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkEntry" id="bgcmd">
+        <property name="visible">True</property>
+        <property name="can_focus">True</property>
+        <property name="tooltip_text" translatable="yes">Command used to set the wallpaper image.</property>
+        <property name="margin_left">3</property>
+        <property name="margin_right">7</property>
+        <property name="margin_top">3</property>
+        <property name="margin_bottom">7</property>
+        <property name="text" translatable="yes">feh --bg-center</property>
+      </object>
+      <packing>
+        <property name="left_attach">1</property>
+        <property name="top_attach">7</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkEntry" id="bgdir">
+        <property name="visible">True</property>
+        <property name="can_focus">True</property>
+        <property name="tooltip_text" translatable="yes">Full path to the directory containg wallpapers.</property>
+        <property name="margin_left">3</property>
+        <property name="margin_right">7</property>
+        <property name="margin_top">3</property>
+        <property name="margin_bottom">3</property>
+        <property name="text" translatable="yes">/usr/local/share/pyfvwm/wallpapers</property>
+      </object>
+      <packing>
+        <property name="left_attach">1</property>
+        <property name="top_attach">6</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkSpinButton" id="edgeresistct">
+        <property name="visible">True</property>
+        <property name="can_focus">True</property>
+        <property name="tooltip_text" translatable="yes">EdgeResistance: The time in miliseconds the mouse needs to be at the edge of the screen to scroll to the next page.</property>
+        <property name="halign">start</property>
+        <property name="margin_left">3</property>
+        <property name="margin_right">7</property>
+        <property name="margin_top">3</property>
+        <property name="margin_bottom">3</property>
+        <property name="adjustment">edgeresist</property>
+      </object>
+      <packing>
+        <property name="left_attach">1</property>
+        <property name="top_attach">5</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkCheckButton" id="edgescroll">
+        <property name="label" translatable="yes">EdgeScroll</property>
+        <property name="visible">True</property>
+        <property name="can_focus">True</property>
+        <property name="receives_default">False</property>
+        <property name="tooltip_text" translatable="yes">Enable EdgeScroll, to move between the pages of a workspace by moving the mouse to the edge of the screen.</property>
+        <property name="halign">end</property>
+        <property name="margin_left">7</property>
+        <property name="margin_right">3</property>
+        <property name="margin_top">3</property>
+        <property name="margin_bottom">3</property>
+        <property name="hexpand">False</property>
+        <property name="image_position">right</property>
+        <property name="active">True</property>
+        <property name="draw_indicator">True</property>
+      </object>
+      <packing>
+        <property name="left_attach">0</property>
+        <property name="top_attach">5</property>
+      </packing>
+    </child>
+  </object>
+</interface>

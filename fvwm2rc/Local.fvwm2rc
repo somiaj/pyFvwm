@@ -1,0 +1,8 @@
+# pyFvwm Local configuration file.
+#
+# This fvwm2rc file is added to the end of all
+# themes. Copy this file into your user directory,
+# $HOME/.pyfvwm/fvwm2rc, to add local fvwm
+# configurations to the end of all themes.
+
+

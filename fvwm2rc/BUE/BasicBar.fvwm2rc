@@ -1,0 +1,148 @@
+# Here the BasicBar panel is defined and created.
+# Functionality provided:
+# - Time and date display
+# - Monitoring of the state of the Workspace Manager
+# - Anchorage for the Menu
+# - Big red Exit button that calls the logout form
+
+#pyFvwmStart
+fvwm.config = fvwm.checkdefaults("basicbar", fvwm.config)
+def FvwmFormatter(config):
+    vpx = config['vpwidth']
+    vpy = config['vpheight']
+    size = config['basicbar']['size']
+    width = 25*size
+    height = 2*size
+    loc = config['basicbar']['loc']
+    if loc.startswith("S"):
+        yloc = "-5"
+        struts = "0 0 0 {}".format(height + 11)
+    else:
+        yloc = "+5"
+        struts = "0 0 {} 0".format(height + 11)
+    if not config['basicbar']['basestruts']: struts = "0 0 0 0"
+    if loc in ['S', 'N']:
+        xloc = "+{}".format(int( (vpx - width)/2 ))
+    elif loc.endswith("W"): xloc = "+5"
+    else: xloc = "-5"
+    data = {'size':size, 'xloc':xloc, 'yloc':yloc, 'struts':struts}
+    data.update({'font': config['basicbar']['font']})
+    fontsizes = ['Large','Regular','Small']
+    fontsize = fontsizes.index(config['basicbar']['fontsize'])
+    if size < 20: fontsizes = [9,7,5]
+    elif size < 25: fontsizes = [10,8,6]
+    elif size < 30: fontsizes = [12,10,8]
+    else: fontsizes = [14,12,10]
+    if size < 30: data.update({'fontsize':fontsizes[fontsize], 'fontsize2': fontsizes[fontsize]+2})
+    else: data.update({'fontsize':fontsizes[fontsize], 'fontsize2': fontsizes[fontsize]+4})
+    rightb = config['basicbar']['rightb']
+    if rightb == "Logout":
+        data.update({'Raction':'Exit'})
+        data.update({'Rcmd':'Module FvwmScript FvwmScript-ConfirmQuit'})
+    elif rightb == "Desktop":
+        data.update({'Raction':'Show'})
+    elif rightb == "Terminal":
+        data.update({'Raction':'Cmd'})
+        data.update({'Rcmd':'FvwmTerm'})
+    elif rightb == "Home":
+        data.update({'Raction':'Home'})
+        data.update({'Rcmd':'FvwmFileMan $[HOME]'})
+    elif rightb == "Nothing":
+        data.update({'Raction':'Nop'})
+        data.update({'Rcmd':'Nop'})
+    if int(config['basicbar']['time']) == 24:
+        data.update({'timef':'%A %H:%M'})
+    else: data.update({'timef':'%A %l:%M'})
+    layers = { 'Top':6, 'Same':4, 'Bottom':2 }
+    data.update({'layer':layers[config['basicbar']['layer']]})
+    return data
+#pyFvwmEnd
+KillModule FvwmButtons BasicBar
+
+Style "BasicBar" !Title, !Handles, Sticky, WindowListSkip, Layer {layer} \
+                 NeverFocus, !IconiFiable, FixedSize, FixedPosition
+
+# EwmhBaseStruts [left] [right] [top] [bottom]
+EwmhBaseStruts {struts}
+
+# BasicBar Configuration
+DestroyModuleConfig BasicBar: *
+*BasicBar: ColorSet 1
+*BasicBar: ButtonGeometry {size}x{size}{xloc}{yloc}
+*BasicBar: Font "Shadow=1 0 SE:xft:{font}:Bold:size={fontsize}:antialias=True" 
+*BasicBar: Padding 0 0
+*BasicBar: Frame 0
+*BasicBar: (1x2, Action (Mouse 3) "Popup BarMenu")
+*BasicBar: (3x2, Container, Frame -1)
+*BasicBar: (3x2, Font "Shadow=1 0 SE:xft:{font}:bold:italic:size={fontsize}", ColorSet 2, Frame 2, \
+            Title "Menu", Action "Next (BasicBar) Menu BasicMenu Interior +18p +100-3p", \
+            Action (Mouse 3) "Popup BarMenu")
+*BasicBar: (End)
+*BasicBar: (1x2, Action (Mouse 3) "Popup BarMenu")
+*BasicBar: (9x2, Frame 0, Container)
+*BasicBar: (1x2, Font "Shadow=1 0 SE:xft:{font}:bold:size={fontsize2}", Title "<", \
+            Action (Mouse 1) "ChangeDesk -1", Action (Mouse 3) "Popup BarMenu")
+*BasicBar: (7x1, id wsnumber, Title "Desktop $[desk.n] ($[page.nx]x$[page.ny])", \
+           Action (Mouse 1) "Nop", Action (Mouse 4) "Change 1", \
+           Action (Mouse 5) "ChangeDesk -1", \
+           Action (Mouse 2) "Next (BasicBar) WindowList Interior +68p +100-2p CurrentDesk \
+           SortByClass OnTop NoGeometry NoCurrentDeskTitle NoNumInDeskTitle TitleForAllDesks \
+           MaxLabelWidth 30 nohotkeys NoDeskNum IconifiedAtEnd", \
+           Action (Mouse 3) "Popup BarMenu")
+*BasicBar: (1x2, Font "Shadow=1 0 SE:xft:{font}:bold:size={fontsize2}", Title ">", \
+            Action (Mouse 1) "ChangeDesk 1", Action (Mouse 3) "Popup BarMenu")
+*BasicBar: (7x1, id wsname, Title "$[desk.name$[desk.n]]", Action (Mouse 1) "Nop", \
+            Action (Mouse 4) "ChangeDesk 1", Action (Mouse 5) "ChangeDesk -1", \
+            Action (Mouse 2) "Next (BasicBar) WindowList Interior +68p 100-2p CurrentDesk \
+            SortByClass OnTop NoGeometry NoCurrentDeskTitle NoNumInDeskTitle TitleForAllDesks \
+            MaxLabelWidth 30 nohotkeys NoDeskNum IconifiedAtEnd", Action (Mouse 3) "Popup BarMenu") 
+*BasicBar: (end)
+*BasicBar: (6x2, Frame 0, Container)
+*BasicBar: (6x1, id clocktime, Title "Time", Action (Mouse 1) "Function ToggleCal", \
+            Action (Mouse 3) "Popup BarMenu")
+*BasicBar: (6x1, id clockdate, Title "Date", Action (Mouse 1) "Function ToggleCal", \
+            Action (Mouse 3) "Popup BarMenu")
+*BasicBar: (End)
+*BasicBar: (1x2, Action (Mouse 3) "Popup BarMenu")
+*BasicBar: (3x2 Container, Frame -1)
+*BasicBar: (3x2, Font "Shadow=1 0 SE:xft:{font}:bold:italic:size={fontsize}", ColorSet 14, Frame 2, \
+            Title "{Raction}", Action "{Rcmd}", Action (Mouse 3) "Popup BarMenu")
+*BasicBar: (End)
+*BasicBar: (1x2, Action (Mouse 3) "Popup BarMenu")
+
+Module FvwmButtons BasicBar
+
+# Update date/time
+DestroyFunc UpdateDateTime
+AddtoFunc UpdateDateTime
++ I PipeRead 'OUT=$(date "+{timef}"); echo SendToModule FvwmButtons ChangeButton clocktime Title \\"${OUT}\\"'
++ I PipeRead 'OUT=$(date "+%B %d"); echo SendToModule FvwmButtons ChangeButton clockdate Title \\"${OUT}\\"'
+Deschedule 42
+Schedule Periodic 10000 42 UpdateDateTime
+
+
+# Configure event to update the BasicBar
+# workspace on Desk and Page changes.
+DestroyFunc BasicBarWorkspace
+AddToFunc BasicBarWorkspace
++ I SendToModule FvwmButtons ChangeButton wsnumber Title "Desktop $[desk.n] ($[page.nx]x$[page.ny])"
++ I SendToModule FvwmButtons Changebutton wsname Title "$[desk.name$[desk.n]]"
+DestroyModuleConfig EventNewDesk:*
+*EventNewDesk: new_desk BasicBarWorkspace
+*EventNewDesk: new_page BasicBarWorkspace
+KillModule FvwmEvent EventNewDesk
+Module FvwmEvent EventNewDesk
+
+Wait BasicBar
+UpdateDateTime
+BasicBarWorkspace
+
+# BarMenu
+DestroyMenu BarMenu
+AddToMenu "BarMenu" "BasicBar" Title top
++ "&BasicBar Panel Preferences" Exec exec pyfvwm util bb
++ "&Workspace Setup" Exec exec pyfvwm util desk
+
+
+
+
