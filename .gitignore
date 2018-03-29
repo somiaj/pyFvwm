@@ -6,3 +6,7 @@ install.log.yaml
 
 # Python Cache
 pyFvwm/__pycache__
+
+# Glade files
+*.glade~
+*.glade#
