@@ -1,0 +1,8 @@
+# Vim backup files
+*.sw*
+
+# Install log
+install.log.yaml
+
+# Python Cache
+pyFvwm/__pycache__
