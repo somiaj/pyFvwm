@@ -237,7 +237,6 @@
         <property name="margin_bottom">3</property>
         <property name="active">0</property>
         <items>
-          <item translatable="yes">Basic Menu</item>
           <item translatable="yes">Applications Menu</item>
           <item translatable="yes">XDG Menu</item>
           <item translatable="yes">WindowOps Menu</item>
@@ -261,7 +260,6 @@
         <property name="margin_bottom">7</property>
         <property name="active">3</property>
         <items>
-          <item translatable="yes">Basic Menu</item>
           <item translatable="yes">Applications Menu</item>
           <item translatable="yes">XDG Menu</item>
           <item translatable="yes">WindowOps Menu</item>

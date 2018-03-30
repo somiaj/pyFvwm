@@ -24,7 +24,7 @@ def FvwmFormatter(config):
 
 DestroyFunc FvwmTerm
 AddToFunc FvwmTerm
-+ I Exec exec {termcmd}
++ I Exec exec {termcmd} $*
 
 DestroyFunc FvwmConsoleTerm
 AddToFunc FvwmConsoleTerm

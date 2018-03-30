@@ -11,8 +11,9 @@
 #pyFvwmStart
 fvwm.config = fvwm.checkdefaults("desktop", fvwm.config)
 def FvwmFormatter(config):
-    data = { 'pagex': config['desktop']['pagex'],
-             'pagey': config['desktop']['pagey'],
+    pagex = config['desktop']['pagex']
+    pagey = config['desktop']['pagey']
+    data = { 'pagex': pagex, 'pagey': pagey,
              'bgcmd': config['desktop']['bgcmd'],
              'edgeresist': config['desktop']['edgeresist'] }
     if config['desktop']['edgescroll']:
@@ -26,11 +27,18 @@ def FvwmFormatter(config):
     desktoplist = ""
     fvwmbackerlist = ""
     movetodesk = ""
+    deskmenu = 'DestroyMenu GotoDeskMenu\nAddToMenu GotoDeskMenu "Desktops" Title\n'
+    pagemenus = ""
     for i, desk in enumerate(config['desktop']['desktops']):
         if i > maxdesk: break
         desktoplist += "DesktopName {} {}\n".format(i, desk['name'])
         fvwmbackerlist += "*FvwmBacker: Command (Desk {}) SetBG {}.png\n".format(i, desk['wallpaper'])
         movetodesk += '+ "{}" MoveToDesk 0 {}\n'.format(desk['name'], i)
+        deskmenu += '+ "{}" Popup Desk{}PageMenu\n'.format(desk['name'], i)
+        pagemenus += 'DestroyMenu Desk{}PageMenu\nAddToMenu Desk{}PageMenu "{}" Title\n'.format(i, i, desk['name'])
+        for m in range(0,pagey):
+            for n in range(0,pagex):
+                pagemenus += '+ "Page {x}x{y}" GotoDeskAndPage {desk} {x} {y}\n'.format(desk=i, x=n, y=m)
     if config['desktop']['fvwmbacker']:
         fvwmbacker = "Module FvwmBacker"
     else: fvwmbacker = "SetBG {}.png".format(config['desktop']['desktops'][0]['wallpaper'])
@@ -41,8 +49,8 @@ def FvwmFormatter(config):
         wallpapers += '+ "{name}" SetBG {name}.png\n'.format(name = os.path.basename(wallpaper)[:-4])
     data.update({'maxdesk': maxdesk, 'desktoplist': desktoplist,
                  'wallpapers': wallpapers, 'fvwmbacker': fvwmbacker,
-                 'fvwmbackerlist': fvwmbackerlist,
-                 'movetodesk': movetodesk })
+                 'fvwmbackerlist': fvwmbackerlist, 'deskmenu': deskmenu,
+                 'movetodesk': movetodesk, 'pagemenus': pagemenus })
     return data
 #pyFvwmEnd
 
@@ -56,11 +64,17 @@ DestroyFunc ChangeDesk
 AddToFunc ChangeDesk
 + I GotoDesk $0 0 {maxdesk}
 
+# SendToDesk Menu
 DestroyMenu MenuSendToDesk
 AddToMenu   MenuSendToDesk
 + "Current" MoveToDesk
 + "" Nop
 {movetodesk}
+
+# GotoDesk Menu
+{deskmenu}
+
+{pagemenus}
 
 DestroyFunc SetBG
 AddToFunc SetBG

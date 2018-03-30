@@ -17,15 +17,49 @@ def FvwmFormatter(config):
     if loc.startswith("S"):
         yloc = "-5"
         struts = "0 0 0 {}".format(height + 11)
+        bbmloc = "0 -100m-3p"
+        winlistloc = "{}p -100m-3p".format(size*4)
+        winlistloc2 = "{}p -100m-3p".format(size*6)
+        basicmenu = """+ "Terminal%icons/terminal.png%" FvwmTerm
++ "File Manager%icons/fileman.png%" FvwmFileMan
++ "Text Editor%icons/editor.png%" FvwmEditor
++ "Web Browser%icons/web.png%" FvwmWeb
++ "Media Player%icons/media.png%" FvwmMedia
++ "Task Manager%icons/tasks.png%" FvwmTasks
++ "" Nop
++ "Wallpapers%icons/wallpaper.png%" PopUp "Wallpapers" Menu 100+3p 100-100m
++ "Help%icons/help.png%" PopUp "MenuFvwmManPages" Menu 100+3p 100-100m
++ "Configuration%icons/settings.png%" Exec exec pyfvwm util bue
++ "" Nop
++ "Applications%icons/programs.png%" PopUp "AppsMenu" Menu 100+3p 100-100m
++ "XDG Applications%icons/apps.png%" PopUp "XDGMenu" Menu 100+3p 100-100m"""
     else:
         yloc = "+5"
         struts = "0 0 {} 0".format(height + 11)
+        bbmloc = "0 100+4p"
+        winlistloc = "{}p 100+4p".format(size*4)
+        winlistloc2 = "{}p 100+4p".format(size*6)
+        basicmenu = """+ "Applications%icons/programs.png%" PopUp "AppsMenu" Menu 100+3p 0
++ "XDG Applications%icons/apps.png%" PopUp "XDGMenu" Menu 100+3p 0
++ "" Nop
++ "Wallpapers%icons/wallpaper.png%" PopUp "Wallpapers" Menu 100+3p 0
++ "Help%icons/help.png%" PopUp "MenuFvwmManPages" Menu 100+3p 0
++ "Configuration%icons/settings.png%" Exec exec pyfvwm util bue
++ "" Nop
++ "Terminal%icons/terminal.png%" FvwmTerm
++ "File Manager%icons/fileman.png%" FvwmFileMan
++ "Text Editor%icons/editor.png%" FvwmEditor
++ "Web Browser%icons/web.png%" FvwmWeb
++ "Media Player%icons/media.png%" FvwmMedia
++ "Task Manager%icons/tasks.png%" FvwmTasks"""
     if not config['basicbar']['basestruts']: struts = "0 0 0 0"
     if loc in ['S', 'N']:
         xloc = "+{}".format(int( (vpx - width)/2 ))
     elif loc.endswith("W"): xloc = "+5"
     else: xloc = "-5"
-    data = {'size':size, 'xloc':xloc, 'yloc':yloc, 'struts':struts}
+    data = {'size':size, 'xloc':xloc, 'yloc':yloc, 'struts':struts,
+            'bbmloc':bbmloc, 'basicmenu':basicmenu,
+            'winlistloc':winlistloc, 'winlistloc2':winlistloc2 }
     data.update({'font': config['basicbar']['font']})
     fontsizes = ['Large','Regular','Small']
     fontsize = fontsizes.index(config['basicbar']['fontsize'])
@@ -51,15 +85,15 @@ def FvwmFormatter(config):
         data.update({'Raction':'Nop'})
         data.update({'Rcmd':'Nop'})
     if int(config['basicbar']['time']) == 24:
-        data.update({'timef':'%A %H:%M'})
-    else: data.update({'timef':'%A %l:%M'})
+        data.update({'timef':'%H:%M'})
+    else: data.update({'timef':'%l:%M %p'})
     layers = { 'Top':6, 'Same':4, 'Bottom':2 }
     data.update({'layer':layers[config['basicbar']['layer']]})
     return data
 #pyFvwmEnd
 KillModule FvwmButtons BasicBar
 
-Style "BasicBar" !Title, !Handles, Sticky, WindowListSkip, Layer {layer} \
+Style "BasicBar" !Title, !Handles, Sticky, WindowListSkip, Layer {layer}, \
                  NeverFocus, !IconiFiable, FixedSize, FixedPosition
 
 # EwmhBaseStruts [left] [right] [top] [bottom]
@@ -75,32 +109,32 @@ DestroyModuleConfig BasicBar: *
 *BasicBar: (1x2, Action (Mouse 3) "Popup BarMenu")
 *BasicBar: (3x2, Container, Frame -1)
 *BasicBar: (3x2, Font "Shadow=1 0 SE:xft:{font}:bold:italic:size={fontsize}", ColorSet 2, Frame 2, \
-            Title "Menu", Action "Next (BasicBar) Menu BasicMenu Interior +18p +100-3p", \
-            Action (Mouse 3) "Popup BarMenu")
+            id bbmenu, Title "Menu", Action "PopupBasicMenu", Action (Mouse 3) "Popup BarMenu")
 *BasicBar: (End)
 *BasicBar: (1x2, Action (Mouse 3) "Popup BarMenu")
 *BasicBar: (9x2, Frame 0, Container)
 *BasicBar: (1x2, Font "Shadow=1 0 SE:xft:{font}:bold:size={fontsize2}", Title "<", \
             Action (Mouse 1) "ChangeDesk -1", Action (Mouse 3) "Popup BarMenu")
 *BasicBar: (7x1, id wsnumber, Title "Desktop $[desk.n] ($[page.nx]x$[page.ny])", \
-           Action (Mouse 1) "Nop", Action (Mouse 4) "Change 1", \
-           Action (Mouse 5) "ChangeDesk -1", \
-           Action (Mouse 2) "Next (BasicBar) WindowList Interior +68p +100-2p CurrentDesk \
+           Action (Mouse 1) "Next (BasicBar) Menu GotoDeskMenu Interior {winlistloc2}", \
+           Action (Mouse 4) "ChangeDesk 1", Action (Mouse 5) "ChangeDesk -1", \
+           Action (Mouse 2) "Next (BasicBar) WindowList Interior {winlistloc} CurrentDesk \
            SortByClass OnTop NoGeometry NoCurrentDeskTitle NoNumInDeskTitle TitleForAllDesks \
            MaxLabelWidth 30 nohotkeys NoDeskNum IconifiedAtEnd", \
            Action (Mouse 3) "Popup BarMenu")
 *BasicBar: (1x2, Font "Shadow=1 0 SE:xft:{font}:bold:size={fontsize2}", Title ">", \
             Action (Mouse 1) "ChangeDesk 1", Action (Mouse 3) "Popup BarMenu")
-*BasicBar: (7x1, id wsname, Title "$[desk.name$[desk.n]]", Action (Mouse 1) "Nop", \
+*BasicBar: (7x1, id wsname, Title "$[desk.name$[desk.n]]", \
+            Action (Mouse 1) "Next (BasicBar) Menu GotoDeskMenu Interior {winlistloc2}", \
             Action (Mouse 4) "ChangeDesk 1", Action (Mouse 5) "ChangeDesk -1", \
-            Action (Mouse 2) "Next (BasicBar) WindowList Interior +68p 100-2p CurrentDesk \
+            Action (Mouse 2) "Next (BasicBar) WindowList Interior {winlistloc} CurrentDesk \
             SortByClass OnTop NoGeometry NoCurrentDeskTitle NoNumInDeskTitle TitleForAllDesks \
             MaxLabelWidth 30 nohotkeys NoDeskNum IconifiedAtEnd", Action (Mouse 3) "Popup BarMenu") 
 *BasicBar: (end)
 *BasicBar: (6x2, Frame 0, Container)
-*BasicBar: (6x1, id clocktime, Title "Time", Action (Mouse 1) "Function ToggleCal", \
-            Action (Mouse 3) "Popup BarMenu")
 *BasicBar: (6x1, id clockdate, Title "Date", Action (Mouse 1) "Function ToggleCal", \
+            Action (Mouse 3) "Popup BarMenu")
+*BasicBar: (6x1, id clocktime, Title "Time", Action (Mouse 1) "Function ToggleCal", \
             Action (Mouse 3) "Popup BarMenu")
 *BasicBar: (End)
 *BasicBar: (1x2, Action (Mouse 3) "Popup BarMenu")
@@ -110,15 +144,16 @@ DestroyModuleConfig BasicBar: *
 *BasicBar: (End)
 *BasicBar: (1x2, Action (Mouse 3) "Popup BarMenu")
 
-Module FvwmButtons BasicBar
+# Function to open BasicMenu
+DestroyFunc PopupBasicMenu
+AddToFunc PopupBasicMenu
++ I Next (BasicBar) Menu BasicMenu Interior {bbmloc}
 
 # Update date/time
-DestroyFunc UpdateDateTime
-AddtoFunc UpdateDateTime
-+ I PipeRead 'OUT=$(date "+{timef}"); echo SendToModule FvwmButtons ChangeButton clocktime Title \\"${OUT}\\"'
-+ I PipeRead 'OUT=$(date "+%B %d"); echo SendToModule FvwmButtons ChangeButton clockdate Title \\"${OUT}\\"'
 Deschedule 42
-Schedule Periodic 10000 42 UpdateDateTime
+Schedule Periodic 10000 42 PipeRead '\
+OUT=$(date "+{timef}"); echo SendToModule FvwmButtons ChangeButton clocktime Title \\"${OUT}\\"; \
+OUT=$(date "+%a %b %d"); echo SendToModule FvwmButtons ChangeButton clockdate Title \\"${OUT}\\"'
 
 
 # Configure event to update the BasicBar
@@ -133,9 +168,12 @@ DestroyModuleConfig EventNewDesk:*
 KillModule FvwmEvent EventNewDesk
 Module FvwmEvent EventNewDesk
 
+
+# Launch Basic Bar
+Module FvwmButtons BasicBar
 Wait BasicBar
-UpdateDateTime
-BasicBarWorkspace
+PipeRead 'OUT=$(date "+{timef}"); echo SendToModule FvwmButtons ChangeButton clocktime Title \\"${OUT}\\"; \
+OUT=$(date "+%a %b %d"); echo SendToModule FvwmButtons ChangeButton clockdate Title \\"${OUT}\\"'
 
 # BarMenu
 DestroyMenu BarMenu
@@ -143,6 +181,22 @@ AddToMenu "BarMenu" "BasicBar" Title top
 + "&BasicBar Panel Preferences" Exec exec pyfvwm util bb
 + "&Workspace Setup" Exec exec pyfvwm util desk
 
+# BasicMenu
+DestroyMenu BasicMenu
+AddToMenu "BasicMenu"@BUE/sidepic.png@
++ DynamicPopUpAction SendToModule FvwmButtons ChangeButton bbmenu Colorset 22
++ DynamicPopDownAction SendToModule FvwmButtons ChangeButton bbmenu Colorset 2
++ "" Nop
+{basicmenu}
++ "" Nop
++ "Log Out%icons/quit.png%" Module FvwmScript FvwmScript-ConfirmQuit
++ "" Nop
+
+
+# BasicMenu Styles
+CopyMenuStyle "*" "BasicMenu"
+MenuStyle "BasicMenu" VerticalItemSpacing 4 4
+ChangeMenuStyle "BasicMenu" "BasicMenu"
 
 
 

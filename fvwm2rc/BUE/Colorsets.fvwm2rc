@@ -13,3 +13,7 @@ ColorSet 10 bg $[bg.cs2], fg white, Dgradient 256 #000 #888, Alpha 50, Dither
 #Test (f $[infostore.wallpaper]) ColorSet 10 bg average, AspectPixmap $[infostore.wallpaper], Alpha 100
 Colorset 14 fg white, bg #8B6C74, fgsh black, Vgradient 2 #9A7981 #917078
 
+
+# Colorset for a pressed BasicBar Menu Button
+Colorset 22 fg White, bg slategray4, sh #9FADBC, hi #3A3D41, fgsh black  VGradient 2 #79899A #708091
+
