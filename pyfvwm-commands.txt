@@ -1,0 +1,108 @@
+# pyfvwm: Command line utility for pyFvwm (Python 3 Configuration System for Fvwm)
+#
+#     Usage: pyfvwm [command] [flags] [arguments]
+#
+# The following is a list of pyfvwm commands, including plans
+# for future commands. In addition a brief description
+# of the command is given.
+#
+# List output Key:
+#    !  =  System file that is overridden by user file in UserDir.
+#    +  =  User file in UserDir that is overriding a system file.
+#    @  =  User file in UserDir that is not part of the system.
+#
+# Work in progress: Not all available in pyfvwm
+
+###
+### pyfvwm Commands and options:  #  Ver: Description 
+###
+fvwm2rc [flags] [rcfile]:         # v0.1: Lists/Builds fvwm2rc files. Outputs to stdout
+  flags:
+    -edit                         # v0.2: Edits UserDir copy of fvwm2rc file if apps.editor is defined.
+                                  #       If UserDir copy doesn't exist, makes one from system then edits that.
+    -pager                        # v0.2: Use pydoc.pager to export data to a pager.
+    -save                         # ToDo: Save output
+  rcfile:
+    list                          # v0.1: Lists fvwm2rc files. System themes marked with a ! are being overridden
+                                  #       by a file of the same name in UserDir. User themes marked with + are
+                                          overriding a system theme. Default option if no rcfile given.
+    <rcfilename>                  # v0.1: Formats fvwm2rc file and outputs to stdout.
+                                  #       UserDir fvwm2rc file overrides system file.
+                                  #       Starts with matching is not case sensitive
+                                  #       and will list fvwm2rc files if multiple matches.
+
+###
+###
+###
+themes [flags] [themename]:       # v0.2: Lists/Controls theme information
+  flags:
+    -default <themename>          # v0.2: Make themename default.
+    -edit <themename>             # v0.2: Edit .yaml theme file. Copy to UserDir if user them non existent.
+                                  #       Edits default theme if <themename> not provided.
+    -add <rcfilename> <n>         # ToDo: Add fvwm2rc file to theme at position n (default to end)
+                                  #       If fvwm2rc file is in theme move to position n instead.
+    -remove <rcfilename>          # ToDo: Remove fvwm2rc file from theme
+  themename:
+    list                          # v0.2: List themes. System themes marked with a ! are being overridden by
+                                  #       a user theme of the same name. User themes marked with a + are
+                                  #       overriding a system theme. default theme (no .yaml extension) should
+                                  #       be a link and this will show which theme default is pointing at.
+    <themename>                   # v0.2: Outputs the fvwm2rc files used by the theme. Files marked with a + are
+                                  #       system themes being overridden by a file in UserDir, while @ is user
+                                  #       configuration file that doesn't have a system version.
+
+###
+###
+###
+build [flags] [themename]:        # v0.1: Builds themename and outputs the result.
+                                  #       Defaults to default theme if none is provided.
+  flags:
+    -save                         # v0.2: Save the output to Userdir/.fvwm2rc.
+    -pager                        # v0.2: Pipe the output to more.
+    -fvwmread                     # v0.2: Save the output to Userdir/.fvwm2rc and output
+                                          Read Userdir/.fvwm2rc. For use with PipeRead:
+                                          PipeRead "pyfvwm build -fvwmpipe [themename]"
+
+###
+###
+###
+initialize $[vp.width] $[vp.height] [themename]:
+                                  # v0.1: Used with Fvwm and PipeRead. Sends the vp.width and
+                                  #            vp.height to pyFvwm to use in building.
+                                    ToDo: Add support for multiple themes, currently only uses default.
+
+
+###
+###
+###
+utilities [utilityname]:          # v0.1: Launch a helper utility. Currently only helper utilities
+                                          are pyGObject Gtk3 configuration apps.
+  utilityname:
+    list                          # v0.1: Lists available utilities. Default option if none given.
+    <utilityname>                 # v0.1: Name of the utility to run.
+
+###
+###
+###
+reload rcfilename:                # v0.1: Builds the given fvwm2rc file, saves it to a tmp UserDir/.rcfilename.tmp,
+                                          and then sends Fvwm the Read command via FvwmCommand.
+
+###
+###
+###
+configure [option]:               # v0.2: Prints configuration information about the pyFvwm install.
+  option:
+    version                       # v0.2: Prints just the version.
+    home                          # v0.2: Prints just the pyFvwm home directory.
+    userdir                       # v0.2: Prints just the UserDir directory
+
+###
+###
+###
+version:                          # v0.2: Short for configure version.
+
+###
+###
+###
+help:                             # v0.1: Print help information.
+ 

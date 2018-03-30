@@ -19,21 +19,34 @@ import yaml
 
 # Set this to the location of pyfvwm's install directory.
 global home
-home = "/home/jaimos/pyfvwm-0.1"
-version = 0.2
+home = "/usr/local/share/pyfvwm"
+version = "0.2"
 
 #
 # Main pyFvwm class
 #
 class pyFvwm:
     def __init__(self):
+        # Initialize Variables
         self.home = home
         self.version = version
-        self.userdir = "{}/.pyfvwm".format(os.environ['HOME'])
+        if 'PYFVWMUSERDIR' in os.environ:
+            self.userdir = os.environ['PYFVWMUSERDIR']
+        else: self.userdir = "{}/.pyfvwm".format(os.environ['HOME'])
         self.yaml = "config.yaml"
         self.config = {}
+        self.defaults = {}
+        self.fvwm2rcsystem = []
+        self.fvwm2rcuser = []
+        self.themessystem = []
+        self.themesuser = []
+        self.defaulttheme = ""
+        self.currenttheme = {}
+        
+        # Initialization Functions
         self.loadconfig()
         self.loadfvwm2rc()
+        self.loadthemes()
 
     # Loads configuration from YAML file. Creates a blank file if none is found.
     def loadconfig(self):
@@ -66,9 +79,10 @@ class pyFvwm:
     # Loads and default configuration file. This file contains
     # the definitions needed of all configuration variables.
     def loaddefaults(self):
-        f = open('{}/pyFvwm/defaults.yaml'.format(self.home), 'r')
-        self.defaults = yaml.safe_load(f)
-        f.close()
+        if len(self.defaults) == 0:
+            f = open('{}/pyFvwm/defaults.yaml'.format(self.home), 'r')
+            self.defaults = yaml.safe_load(f)
+            f.close()
 
     # Checks to see if a given configuration group is in the
     # configuration file, and then compares the configuration
@@ -111,11 +125,65 @@ class pyFvwm:
         self.config['vpheight'] = int(height)
         self.saveconfig()
 
+    # Builds a list of both system and user themes available.
+    def loadthemes(self):
+        # System Themes
+        self.themessystem = []
+        for name in glob.glob("{}/themes/*.yaml".format(self.home)):
+            start = len(self.home) + 8
+            self.themessystem.append(name[start:-5]) 
+        self.themessystem.sort()
+        # User Themes
+        self.themesuser = []
+        for name in glob.glob("{}/themes/*.yaml".format(self.userdir)):
+            start = len(self.userdir) + 8
+            self.themesuser.append(name[start:-5]) 
+        self.themesuser.sort()
+        # Find default theme. If no default theme is found
+        # self.defaultname will be set to "" and warnings will
+        # be outputted to stdout.
+        if os.path.exists("{}/themes/default".format(self.userdir)):
+            if os.path.islink("{}/themes/default".format(self.userdir)):
+                lnk = os.readlink("{}/themes/default".format(self.userdir))[:-5]
+                if '/' in lnk:  lnk = lnk[lnk.rfind('/')+1:]
+            else: print("Warning! {}/themes/default exists and is not a link.".format(self.userdir))
+        elif os.path.islink("{}/themes/default".format(self.home)):
+            lnk = os.readlink("{}/themes/default".format(self.home))[:-5]
+            if '/' in lnk:  lnk = lnk[lnk.rfind('/')+1:]
+        else: print("Warning! No default theme found.")
+        if lnk in self.themessystem + self.themesuser:
+            self.defaulttheme = lnk
+        else: print("Warning! default link points to an invalid theme.")
+
+
+
+    # Loads a theme and places it at fvwm.currenttheme
+    def loadtheme(self, theme):
+        if theme == 'default':
+            fname = '{}/themes/default'.format(self.userdir)
+            if os.path.isfile(fname):
+                f = open(fname, 'r')
+                self.currenttheme = yaml.safe_load(f)
+                f.close()
+            else:
+                f = open('{}/themes/default'.format(self.home), 'r')
+                self.currenttheme = yaml.safe_load(f)
+                f.close()
+        elif theme in self.themesuser:
+            f = open('{}/themes/{}.yaml'.format(self.userdir, theme), 'r')
+            self.currenttheme = yaml.safe_load(f)
+            f.close()
+        elif theme in self.themessystem:
+            f = open('{}/themes/{}.yaml'.format(self.home, theme), 'r')
+            self.currenttheme = yaml.safe_load(f)
+            f.close()
+
+
     # Builds a list of both system and user fvwm2rc files available.
     def loadfvwm2rc(self):
         # Build list of system fvwm2rc files
         self.fvwm2rcsystem = []
-        for root, dirs, files, in os.walk("{}/fvwm2rc/".format(self.home)):
+        for root, dirs, files in os.walk("{}/fvwm2rc/".format(self.home)):
             start = len(self.home) + 9
             for name in files:
                 if name.endswith(".fvwm2rc"):
@@ -135,18 +203,16 @@ class pyFvwm:
     # Builds a fvwm configuration file from a theme,
     # which is just a list of fvwm2rc files to format.
     def buildfvwm2rc(self, theme="default"):
-        tmpfname = "{}/themes/{}".format(self.home, theme)
-        try: tmpf = open(tmpfname, "r")
-        except: return "FileNotFound: {}".format(tmpfname)
-        data = tmpf.readlines()
-        tmpf.close()
+        self.loadtheme(theme)
+        if 'fvwm2rc' in self.currenttheme and len(self.currenttheme['fvwm2rc']) > 0:
+            fvwmout = "##### pyFvwm: generating theme {} #####\n".format(theme)
+            for fvwm2rc in self.currenttheme['fvwm2rc']:
+                fvwmout += self.formatfvwm2rc(fvwm2rc)
+            # Add Local configuration to end if it exists:
+            if os.path.isfile("{}/fvwm2rc/Local.fvwm2rc".format(self.userdir)):
+                fvwmout += self.formatfvwm2rc('Local')
+            return fvwmout
 
-        fvwm2rc = "### pyFvwm generating theme {}\n".format(theme)
-        for line in data:
-            fvwm2rc += self.formatfvwm2rc(line.rstrip('\n'))
-        # Add Local configuration to end
-        fvwm2rc += self.formatfvwm2rc('Local')
-        return fvwm2rc
 
     # Formats an fvwm2rc file by using a Python header which
     # defines the function FvwmFormatter that returns the
@@ -157,13 +223,13 @@ class pyFvwm:
             tmpfname = "{}/fvwm2rc/{}.fvwm2rc".format(self.userdir, rcfile)
         elif rcfile in self.fvwm2rcsystem:
             tmpfname = "{}/fvwm2rc/{}.fvwm2rc".format(self.home, rcfile)
-        else: return "\n#pyFvwmError: Unknown fvwm2rc file: {}\n".format(rcfile)
+        else: return "\n#####pyFvwmError: Unknown fvwm2rc file: {}\n".format(rcfile)
 
-        fvwm2rc = '\n#\n# pyFvwm formatting {}\n#\n'.format(tmpfname)
+        fvwmout = '\n#####\n# pyFvwm: formatting {}\n#####\n'.format(tmpfname)
         header = ''
         pyFvwmBlock = False
         try: tmpf = open(tmpfname, "r")
-        except: return "\n#pyFvwmError: FileNotFound: {}\n".format(tmpfname)
+        except: return "\n#####pyFvwmError: FileNotFound: {}\n".format(tmpfname)
         data = tmpf.readlines()
         tmpf.close()
 
@@ -176,21 +242,21 @@ class pyFvwm:
                 pyFvwmBlock = False
                 continue
             if pyFvwmBlock: header += line
-            else: fvwm2rc += line
+            else: fvwmout += line
         # Run pyFvwmBlock code if found
         if len(header) > 5:
             try:
                 global fvwm
-                fvwm=self
+                fvwm = self
                 exec(header, globals())
                 formatter = FvwmFormatter(self.config)
             except Exception as err:
-                return "#pyFvwmBlockError: {}".format(err)
+                return "#####pyFvwmBlockError: {}".format(err)
             try:
                 fmt = Fvwm2rcFormatter()
-                fvwm2rc = fmt.format(fvwm2rc, **formatter)
-            except: return "#PyFvwmError: FvwmFormatterError"
-        return fvwm2rc
+                fvwmout = fmt.format(fvwmout, **formatter)
+            except: return "#####pyFvwmError: FvwmFormatterError"
+        return fvwmout
 
     # Sends commands to a running fvwm instance.
     # Currently only sends commands to fvwm via the shell
@@ -210,7 +276,7 @@ class pyFvwm:
         except: return
         tmpf.write(fvwm2rc)
         tmpf.write("\n# This message will self destruct in 30 seconds.\n")
-        tmpf.write("\nSchedule 30000 Exec exec rm {}\n".format(tmpfname))
+        tmpf.write("\nTest (f {name}) Schedule 30000 Exec exec rm {name}\n".format(name=tmpfname))
         tmpf.close()
         cmd = "Read {}".format(tmpfname)
         subprocess.Popen(["FvwmCommand", cmd])

@@ -1,0 +1,9 @@
+# pyFvwm Local configuration file.
+#
+# This file is added to the end of all themes.
+# This file is located in your UserDir:
+#    $PYFVWMUSERDIR/fvwm2rc/Local.fvwm2rc
+#
+# Add any configurations to be used in all themes below.
+
+

@@ -17,10 +17,14 @@ import subprocess
 
 # Set this to the home location pyfvwm's files.
 global home
-home = "/home/jaimos/pyfvwm-0.1"
+home = "/usr/local/share/pyfvwm"
 
+
+#
 # Setup enviorment so the utilities can find
 # the Python Fvwm module.
+
+# Set PYTHONPATH for subprocesses
 if 'PYTHONPATH' in os.environ:
     ppath = os.environ['PYTHONPATH']
     if '{}/pyFvwm'.format(home) not in ppath:
@@ -28,11 +32,19 @@ if 'PYTHONPATH' in os.environ:
         os.environ.update({'PYTHONPATH':'{}/pyFvwm:{}'.format(home,ppath)})
 else: os.environ.update({'PYTHONPATH':'{}/pyFvwm'.format(home)})
 
+# This should not be needed
 # Add home to working path
+#try:
+#    sys.path.index('{}/pyFvwm'.format(home))
+#except ValueError:
+#    sys.path.append('{}/pyFvwm'.format(home))
+
+# Check if yaml is installed.
 try:
-    sys.path.index('{}/pyFvwm'.format(home))
-except ValueError:
-    sys.path.append('{}/pyFvwm'.format(home))
+    import yaml
+except:
+    print("Unable to load python yaml.")
+    sys.exit(1)
 
 # Try to import Fvwm
 try:
@@ -48,12 +60,6 @@ except:
     print("Unable to initialize pyFvwm().")
     sys.exit(1)
 
-# Check if yaml is installed.
-try:
-    import yaml
-except:
-    print("Unable to load python yaml.")
-    sys.exit(1)
 
 
 # The functions for each of pyfvwm's commands:
@@ -96,18 +102,178 @@ def utils(fvwm, *args):
 # and export the result to $HOME/.pyfvwm/.fvwm2rc. Then pyfvwm
 # outputs the command 'Read $HOME/.pyfvwm/.fvwm2rc'.
 def build(fvwm, *args):
-    fvwm2rc = fvwm.buildfvwm2rc()
-    configfile = open("{}/.fvwm2rc".format(fvwm.userdir), "w")
-    configfile.write(fvwm2rc)
-    configfile.close()
-    print("Read {}/.fvwm2rc".format(fvwm.userdir))
+    action = "stdout"
+    if len(args) == 0: theme = 'default'
+    else:
+        # Scan for flags
+        if args[0].startswith("-"):
+            cmd = args[0][1:]
+            args = args[1:]
+            flags = findmatch(cmd, ['save', 'pager', 'fvwmread'])
+            if len(flags) == 1:
+                flag = flags[0]
+                # Edit theme
+                if flag == 'save': action = 'save'
+                if flag == 'pager': action = 'pager'
+                if flag == 'fvwmread': action = 'fvwmread'
+            else: sys.exit("Error! Invalid flag -{}".format(cmd))
+    if len(args) == 0: theme = 'default'
+    else:
+        theme_list = fvwm.themesuser + list(set(fvwm.themessystem) - set(fvwm.themesuser))
+        themes = findmatch(args[0], theme_list)
+        if len(themes) == 1: theme = themes[0]
+        elif len(themes) == 0: sys.exit("Error! Not theme matching {} found.".format(args[0]))
+        else:
+            print("Error! Multiple themes matching {} found:".format(args[0]))
+            for name in themes: print("    {}".format(name))
+            sys.exit(1)
+
+    fvwmout = fvwm.buildfvwm2rc(theme)
+    if action == 'stdout': print(fvwmout)
+    elif action == 'fvwmread' or action == 'save':
+        configfile = open("{}/.fvwm2rc".format(fvwm.userdir), "w")
+        configfile.write(fvwmout)
+        configfile.close()
+        if action == 'fvwmread':  print("Read {}/.fvwm2rc".format(fvwm.userdir))
+    elif action == 'pager':
+        import pydoc
+        pydoc.pager(fvwmout)
+
+
 
 #
 #   pyfvwm theme [theme]
 #
-# ToDo: Build this function
+# List and prints information about themes.
 def theme(fvwm, *args):
-    pass
+    # List available themes
+    if len(args) == 0 or "list".startswith(args[0]):
+        print("pyFvwm themes:\n  System: {}/themes".format(fvwm.home))
+        # List system themes
+        for name in fvwm.themessystem:
+            if name in fvwm.themesuser:
+                print("   !{}".format(name))
+            else:
+                print("    {}".format(name))
+        # List user themes (if they exist)
+        if len(fvwm.themesuser) > 0:
+            print("\n  UserDir: {}/themes".format(fvwm.userdir))
+            for name in fvwm.themesuser:
+                useroverride = " "
+                if name in fvwm.themessystem: useroverride = "+"
+                print("   {}{}".format(useroverride, name))
+        # State default theme
+        if fvwm.defaulttheme == "": print("\n  DefaultTheme: Not Found!")
+        else:
+            if fvwm.defaulttheme in fvwm.themesuser:
+                if fvwm.defaulttheme in fvwm.themessystem:
+                    print("\n  DefaultTheme -> +{}".format(fvwm.defaulttheme))
+                else:
+                    print("\n  DefaultTheme -> @{}".format(fvwm.defaulttheme))
+            elif fvwm.defaulttheme in fvwm.themessystem:
+                print("\n  DefaultTheme -> {}".format(fvwm.defaulttheme))
+            else: print("\n  DefaultTheme: Invalid Theme!")
+        sys.exit()
+
+    # Scan for flags
+    if args[0].startswith("-"):
+        cmd = args[0][1:]
+        flags = findmatch(cmd, ['default', 'edit'])
+        if len(flags) == 1:
+            flag = flags[0]
+            # Edit theme
+            if flag == 'edit':
+                if 'apps' in fvwm.config and 'editor' in fvwm.config['apps']:
+                    editor = fvwm.config['apps']['editor']
+                else: sys.exit("Unable to edit theme. pyFvwm Config: apps.editor not defined")
+                if len(args) == 1: theme = 'default'
+                else: theme = args[1]
+                theme_list = ['default'] + fvwm.themesuser + list(set(fvwm.themessystem) - set(fvwm.themesuser))
+                themes = findmatch(theme, theme_list)
+                if len(themes) == 1:
+                    if themes[0] == 'default':
+                        if fvwm.defaulttheme != "": theme = fvwm.defaulttheme
+                        else: sys.exit("Error! Default theme not defined.")
+                    else: theme = themes[0]
+                    # If there isn't a user copy of the theme, make it then edit.
+                    if not os.path.isfile('{}/themes/{}.yaml'.format(fvwm.userdir,theme)):
+                        if os.path.isfile('{}/themes/{}.yaml'.format(fvwm.home,theme)):
+                            if not os.path.exists('{}/themes'.format(fvwm.userdir)):
+                                os.makedirs('{}/themes'.format(fvwm.userdir))
+                            subprocess.Popen(["cp", "{}/themes/{}.yaml".format(fvwm.home,theme),
+                                              "{}/themes/".format(fvwm.userdir)])
+                        else: sys.exit("Error! Theme {}/themes/{}.yaml not found".format(fvwm.home, theme))
+                    # Open theme to edit
+                    if fvwm.config['apps']['editorterm']:
+                        cmd = [ fvwm.config['apps']['term'], '-e',
+                                fvwm.config['apps']['editor'],
+                                '{}/themes/{}.yaml'.format(fvwm.userdir, theme) ]
+                    else: cmd = [ fvwm.config['apps']['editor'],
+                                  '{}/themes/{}.yaml'.format(fvwm.userdir, theme) ]
+                    subprocess.Popen(cmd)
+                    sys.exit()
+            # Set Default Theme
+            elif flag == 'default':
+                if len(args) == 1: sys.exit("Error! Default theme missing.\n Ussage: pyfvwm themes -default <themename>")
+                theme_list = fvwm.themesuser + list(set(fvwm.themessystem) - set(fvwm.themesuser))
+                themes = findmatch(args[1], theme_list)
+                if len(themes) == 1:
+                    if not os.path.isdir("{}/themes".format(fvwm.userdir)):
+                        os.makedirs("{}/themes".format(fvwm.userdir))
+                    if os.path.exists("{}/themes/default".format(fvwm.userdir)):
+                        os.remove("{}/themes/default".format(fvwm.userdir))
+                    if themes[0] in fvwm.themesuser:
+                        os.symlink("{}.yaml".format(themes[0]),"{}/themes/default".format(fvwm.userdir))
+                    else: os.symlink("{}/themes/{}.yaml".format(fvwm.home, themes[0]),"{}/themes/default".format(fvwm.userdir))
+                    print("{} is now the default theme.".format(themes[0]))
+                    sys.exit()
+                elif len(themes) == 0:
+                    sys.exit("Error! No them matching {} found.".format(args[1]))
+                else:
+                    print("Multiple themes found matching {}.".format(args[1]))
+                    for theme in themes: print("    {}".format(theme))
+                    sys.exit()
+        else:
+            sys.exit("Unknown flag -{}.".format(cmd))
+
+    # Find Matching theme 
+    theme_list = ['default'] + fvwm.themesuser + list(set(fvwm.themessystem) - set(fvwm.themesuser))
+    theme = args[0]
+    themes = findmatch(theme, theme_list)
+    if len(themes) == 1:
+        fvwm.loadtheme(themes[0])
+        if 'fvwm2rc' in fvwm.currenttheme:
+            if themes[0] == 'default':
+                if fvwm.defaulttheme in fvwm.themesuser:
+                    if fvwm.defaulttheme in fvwm.themessystem:
+                        print("Default Theme: +{}".format(fvwm.defaulttheme))
+                    else: print("Default Theme: @{}".format(fvwm.defaulttheme))
+                elif fvwm.defaulttheme in fvwm.themessystem:
+                    print("Default Theme: {}".format(fvwm.defaulttheme))
+                else: sys.exit("Error! Invalid default theme.")
+            elif themes[0] in fvwm.themesuser:
+                if themes[0] in fvwm.themessystem:
+                    print("User Theme: +{}\n  fvwm2rc:".format(themes[0]))
+                else:
+                    print("User Theme: @{}\n  fvwm2rc:".format(themes[0]))
+            else:
+                print("System Theme:  {}\n  fvm2rc:".format(themes[0]))
+            # List fvwm2rc files in theme.
+            for rcfile in fvwm.currenttheme['fvwm2rc']:
+                if rcfile in fvwm.fvwm2rcuser:
+                    if rcfile in fvwm.fvwm2rcsystem:
+                        print("   +{}".format(rcfile))
+                    else:
+                        print("   @{}".format(rcfile))
+                else:
+                    if rcfile in fvwm.fvwm2rcsystem:
+                        print("    {}".format(rcfile))
+                    else: print("   !Warning! fvwm2rc {} not found.".format(rcfile))
+            if os.path.isfile("{}/fvwm2rc/Local.fvwm2rc".format(fvwm.userdir)): print("   @Local")
+    elif len(themes) > 1:
+        print("Multiple themes found matching {}.".format(theme))
+        for name in themes: print("    {}".format(name))
+    else: sys.exit("Match not found for theme {}.".format(theme))
 
 
 
@@ -118,46 +284,100 @@ def theme(fvwm, *args):
 # fvwm2rc/*.fvwm2rc file or list available files.
 # Matching is not case sensitive.
 def fvwm2rc(fvwm, *args):
+    # Organize fvwmrcfiles
+    system1, user1, system2, user2 = [[],[],[],[]]
+    for name in fvwm.fvwm2rcsystem:
+        if "/" in name: system1.append(name)
+        else: system2.append(name)
+    for name in fvwm.fvwm2rcuser:
+        if "/" in name: user1.append(name)
+        else: user2.append(name)
+    system = system1 + system2
+    user = user1 + user2
+
     # List fvwm2rc files
     if len(args) == 0 or "list".startswith(args[0]):
-        # Organize subdirectories first
-        system1, user1, system2, user2 = [[],[],[],[]]
-        for name in fvwm.fvwm2rcsystem:
-            if "/" in name: system1.append(name)
-            else: system2.append(name)
-        for name in fvwm.fvwm2rcuser:
-            if "/" in name: user1.append(name)
-            else: user2.append(name)
-
-        # Print a * to configs with user overrides.
-        print("pyFvwm fvwm2rc configuration files:\n  System: {}".format(fvwm.home))
-        for name in system1 + system2:
+        print("pyFvwm fvwm2rc configuration files: *\n  System: {}/fvwm2rc".format(fvwm.home))
+        for name in system:
             if name in fvwm.fvwm2rcuser:
-                print("   *{}".format(name))
+                print("   !{}".format(name))
             else:
                 print("    {}".format(name))
-        print("\n  UserDir: {}".format(fvwm.userdir))
-        for name in user1 + user2:
-            print("    {}".format(name))
+        if len(user) > 0:
+            print("\n  UserDir: {}/fvwm2rc".format(fvwm.userdir))
+            for name in user:
+                if name in fvwm.fvwm2rcsystem: print("   +{}".format(name))
+                else: print("    {}".format(name))
         sys.exit()
+
+    # Flags
+    action = ""
+    if args[0].startswith("-"):
+        cmd = args[0][1:]
+        flags = findmatch(cmd, ['edit', 'pager'])
+        if len(flags) == 1:
+            flag = flags[0]
+            args = args[1:]
+            # Edit theme
+            if flag == 'pager': action = "pager"
+            elif flag == 'edit': action = "edit"
 
     # Find matching rcfile and print the resulting data.
     # First combine system and user list into a single set.
-    rcfiles = fvwm.fvwm2rcuser + list(set(fvwm.fvwm2rcsystem) - set(fvwm.fvwm2rcuser))
-    cmd = str(args[0]).lower()
-    matches = []
-    for rcfile in rcfiles:
-        if rcfile.lower().startswith(cmd):
-            matches.append(rcfile)
+    rcfiles = ['Local'] + fvwm.fvwm2rcuser + list(set(fvwm.fvwm2rcsystem) - set(fvwm.fvwm2rcuser))
+    cmd = str(args[0])
+    matches = findmatch(cmd, rcfiles)
     if len(matches) > 1:
-        print("Multiple fvwm2rc matches for {}".format(cmd))
-        for match in matches:
-            print("    {}".format(match))
+        # Reduce list down to matches
+        system1, user1 = [system[:],user[:]]
+        for name in system1:
+            if name not in matches: system.remove(name)
+        for name in user1:
+            if name not in matches: user.remove(name)
+        print("pyFvwm fvwm2rc configuration files: {}* \n  System: {}/fvwm2rc".format(cmd, fvwm.home))
+        for name in system:
+            if name in fvwm.fvwm2rcuser:
+                print("   !{}".format(name))
+            else:
+                print("    {}".format(name))
+        if len(user) > 0:
+            print("\n  UserDir: {}/fvwm2rc".format(fvwm.userdir))
+            for name in user: print("    {}".format(name))
     elif len(matches) == 0:
         print("No fvwm2rc matches found for {}".format(cmd))
     else:
+        if action == 'edit':
+            if not os.path.isdir("{}/fvwm2rc".format(fvwm.userdir)):
+                os.makedirs("{}/fvwm2rc".format(fvwm.userdir))
+            if not os.path.isfile("{}/fvwm2rc/{}.fvwm2rc".format(fvwm.userdir,matches[0])):
+                if os.path.isfile("{}/fvwm2rc/{}.fvwm2rc".format(fvwm.home,matches[0])):
+                    if '/' in matches[0]:
+                        dest = matches[0][:matches[0].rfind('/')]
+                        if not os.path.isdir("{}/fvwm2rc/{}".format(fvwm.userdir, dest)):
+                            os.makedirs("{}/fvwm2rc/{}".format(fvwm.userdir, dest))
+                    subprocess.Popen(["cp", "{}/fvwm2rc/{}.fvwm2rc".format(fvwm.home, matches[0]),
+                                      "{}/fvwm2rc/{}/".format(fvwm.userdir, dest)])
+                elif matches[0].lower() == 'local':
+                    subprocess.Popen(["cp", "{}/fvwm2rc/Local.skel".format(fvwm.home),
+                                      "{}/fvwm2rc/Local.fvwm2rc".format(fvwm.userdir)])
+                else: sys.exit("Error! Cannot find fvwmrc file {}.".format(matches[0]))
+            # Open theme to edit
+            fvwm.checkdefaults("apps", fvwm.config)
+            if fvwm.config['apps']['editorterm']:
+                cmd = [ fvwm.config['apps']['term'], '-e',
+                        fvwm.config['apps']['editor'],
+                        '{}/fvwm2rc/{}.fvwm2rc'.format(fvwm.userdir, matches[0]) ]
+            else: cmd = [ fvwm.config['apps']['editor'],
+                          '{}/fvwm2rc/{}.fvwm2rc'.format(fvwm.userdir, matches[0]) ]
+            subprocess.Popen(cmd)
+            sys.exit()
+        # Format fvwm2rc file.
         data = fvwm.formatfvwm2rc(matches[0])
-        print(data)
+        if action == 'pager':
+            import pydoc
+            pydoc.pager(data)
+        else: print(data)
+
 
 #
 #   pyfvwm reload fvwm2rc
@@ -172,12 +392,9 @@ def reloadfvwm2rc(fvwm, *args):
         sys.exit(1)
 
     # Find matching fvwm2rc file
-    cmd = str(args[0]).lower()
+    cmd = str(args[0])
     rcfiles = fvwm.fvwm2rcuser + list(set(fvwm.fvwm2rcsystem) - set(fvwm.fvwm2rcuser))
-    matches = []
-    for rcfile in rcfiles:
-        if rcfile.lower().startswith(cmd):
-            matches.append(rcfile)
+    matches = findmatch(cmd, rcfiles)
     if len(matches) > 1:
         print("Multiple fvwm2rc matches for {}".format(cmd))
         for match in matches:
@@ -189,6 +406,7 @@ def reloadfvwm2rc(fvwm, *args):
         fvwm2rc = fvwm.formatfvwm2rc(matches[0])
         fvwm.sendtofvwm(fvwm2rc, name=matches[0])
 
+
 #
 #   pyfvwm init $[vp.width] $[vp.height] [theme]
 #
@@ -198,8 +416,8 @@ def reloadfvwm2rc(fvwm, *args):
 def init(fvwm, *args):
     if len(args) < 2: sys.exit(1)
     fvwm.updatevpsize( int(args[0]), int(args[1]) )
-    if len(args) > 2: build(fvwm,*args[2:])
-    else: build(fvwm)
+    if len(args) > 2: build(fvwm,"-fvwmread",*args[2:])
+    else: build(fvwm, "-fvwmread")
 
 
 #
@@ -266,7 +484,6 @@ def config(fvwm, *args):
 
 
 
-
 #
 #   pyfvwm version
 #
@@ -306,10 +523,30 @@ Commands and options do not need to be given in full. pyfvwm will attempt
 to match to a unique result that starts with the given inputs.
 Examples: 'pyfvwm b' runs a build of the default theme.
           'pyfvwm u bue' launches the utility BUEconf.
+
+Key: Special characters in output lists have the following meanings:
+    !  =  System file that is overridden by user file in UserDir.
+    +  =  User file in UserDir that is overriding a system file.
+    @  =  User file in UserDir that is not part of the system.
 """)
     sys.exit(1)
 
 
+
+# Utility Functions
+
+def findmatch(cmd, commands):
+    cmd = cmd.lower()
+    command_list = []
+    for command in commands:
+        if command.lower().startswith(cmd): command_list.append(command)
+    return command_list
+
+
+
+#
+# Parse input arguments and run appropriate command:
+#
 
 # List of possible commands
 commands = { 'fvwm2rc': fvwm2rc,
@@ -323,16 +560,18 @@ commands = { 'fvwm2rc': fvwm2rc,
              'help': help,
 }
 
-# Parses input for matching command and then
-# calls the resulting function.
+
+# Parse command list and run appropriate command
 if len(sys.argv) > 1:
-    command = sys.argv[1]
-    command_list = []
-    for key in commands:
-        if key.startswith(command): command_list.append(key)
+    cmd = sys.argv[1]
+    command_list = findmatch(cmd, commands)
     if len(command_list) == 1:
-        fvwm = Fvwm.pyFvwm()
         commands[command_list[0]](fvwm, *sys.argv[2:])
-    else: print("No matching commands found:", command)
+    elif len(command_list) == 0:
+        sys.exit("No command matching <{}> found.\nRun pyfvwm help for list of commands.".format(cmd))
+    else:
+        print("Multiple matches for <{}> found:".format(cmd))
+        for command in command_list: print("    {}".format(command))
+        sys.exit(1)
 else: help(fvwm)
 

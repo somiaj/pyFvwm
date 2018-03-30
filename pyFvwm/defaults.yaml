@@ -98,6 +98,6 @@ defaulttests:
     raisedelay: {type: int, values: [0,5000]}
     closebutton: {type: inlist, values: ['Menu', 'Close']}
     fontsize: {type: int, values: [4, 32]}
-    leftmouse: {type: inlist, values: ['Basic', 'Apps', 'XDG', 'Window', 'Fvwm', 'None']}
-    rightmouse:  {type: inlist, values: ['Basic', 'Apps', 'XDG', 'Window', 'Fvwm', 'None']}
+    leftmouse: {type: inlist, values: ['Apps', 'XDG', 'Window', 'Fvwm', 'None']}
+    rightmouse:  {type: inlist, values: ['Apps', 'XDG', 'Window', 'Fvwm', 'None']}
 

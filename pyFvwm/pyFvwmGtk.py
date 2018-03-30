@@ -281,7 +281,7 @@ class pyFvwmWMGrid:
         self.closedata = ['Menu', 'Close']
         self.closebutton = self.builder.get_object('closebutton')
 
-        self.mousedata = ['Basic', 'Apps', 'XDG', 'Window', 'Fvwm', 'None']
+        self.mousedata = ['Apps', 'XDG', 'Window', 'Fvwm', 'None']
         self.leftmouse = self.builder.get_object('leftmouse')
         self.rightmouse = self.builder.get_object('rightmouse')
 
